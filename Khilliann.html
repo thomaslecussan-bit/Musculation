@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #070a10;
+    --panel: #0f1621;
+    --panel2: #161f2e;
+    --line: #223049;
+    --text: #e4eef5;
+    --muted: #7288a0;
+    --accent: #4de0e8;
+    --accent-dim: #1d8a96;
+    --accent2: #d43fd6;
+    --accent2-dim: #7a2a82;
+    --good: #3ee89a;
+    --danger: #ff4d6d;
+    --radius: 6px;
+    --radius-sm: 4px;
+    --glow-cyan: 0 0 12px rgba(63,217,232,0.35);
+    --glow-purple: 0 0 14px rgba(181,101,232,0.35);
+    --font-display: 'Oswald', 'Helvetica Neue', Arial, sans-serif;
+    --font-body: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background:
+      linear-gradient(180deg, rgba(7,10,16,0.55) 0%, rgba(7,10,16,0.72) 45%, var(--bg) 85%),
+      radial-gradient(ellipse 900px 550px at 100% -5%, rgba(212,63,214,0.14), transparent 58%),
+      radial-gradient(ellipse 900px 550px at 0% 0%, rgba(77,224,232,0.13), transparent 55%),
+      url('arcane-duo.jpg.png') center top / cover no-repeat fixed,
+      var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 32px 18px 60px; position: relative; z-index: 1; }
+
+  /* faint grime/scanline overlay for a Zaun street-art feel */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background: repeating-linear-gradient(115deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 3px);
+    mix-blend-mode: overlay;
+  }
+
+  /* glitch/chromatic-aberration flicker for titles */
+  .glitch { position: relative; display: inline-block; }
+  .glitch::before, .glitch::after {
+    content: attr(data-text); position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+    opacity: 0; mix-blend-mode: screen; pointer-events: none;
+  }
+  .glitch::before { color: #ff4dd4; animation: glitchA 6.5s infinite; }
+  .glitch::after { color: #4de0e8; animation: glitchB 6.5s infinite; }
+  @keyframes glitchA {
+    0%, 93%, 100% { opacity: 0; transform: translate(0,0); }
+    94% { opacity: 0.85; transform: translate(-3px, 1px); }
+    95% { opacity: 0; transform: translate(0,0); }
+    96% { opacity: 0.6; transform: translate(2px, -1px); }
+    97% { opacity: 0; }
+  }
+  @keyframes glitchB {
+    0%, 93%, 100% { opacity: 0; transform: translate(0,0); }
+    94% { opacity: 0.85; transform: translate(3px, -1px); }
+    95% { opacity: 0; transform: translate(0,0); }
+    96% { opacity: 0.6; transform: translate(-2px, 1px); }
+    97% { opacity: 0; }
+  }
+
+  /* PIN gate */
+  #gate {
+    position: fixed; inset: 0; z-index: 999;
+    display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 6px;
+    padding: 20px;
+    background:
+      linear-gradient(180deg, rgba(7,10,16,0.35) 0%, rgba(7,10,16,0.55) 45%, rgba(7,10,16,0.92) 78%, var(--bg) 100%),
+      url('arcane-duo.jpg.png') center 25% / cover no-repeat,
+      var(--bg);
+  }
+  #app-content { display: none; }
+  .gate-illustration { width: 260px; max-width: 80vw; margin-bottom: 14px; filter: drop-shadow(0 0 18px rgba(77,224,232,0.22)); }
+  .gate-illustration svg { width: 100%; height: auto; display: block; }
+  .gate-hero-img {
+    width: 100%; height: auto; display: block; border-radius: var(--radius);
+    border: 1px solid var(--line); object-fit: cover;
+  }
+  .gate-title { font-family: var(--font-display); color: var(--accent); font-size: 32px; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 10px; text-shadow: 0 2px 20px rgba(0,0,0,0.85), 0 0 22px rgba(77,224,232,0.4); position: relative; z-index: 1; }
+  .gate-title .glitch::before, .gate-title .glitch::after { letter-spacing: 0.08em; }
+  .gate-sub { color: var(--text); font-size: 12.5px; margin-bottom: 22px; text-align: center; max-width: 260px; line-height: 1.5; font-family: var(--font-body); text-shadow: 0 1px 10px rgba(0,0,0,0.8); position: relative; z-index: 1; }
+  .gate-dots { display: flex; gap: 14px; margin-bottom: 26px; }
+  .gate-dot { width: 13px; height: 13px; border-radius: 50%; background: var(--panel2); border: 1.5px solid var(--line); transition: all 0.15s; }
+  .gate-dot.filled { background: var(--accent); border-color: var(--accent); }
+  .gate-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 240px; margin: 0 auto; }
+  .gate-key {
+    padding: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    font-family: var(--font-display); font-size: 18px; font-weight: 600; cursor: pointer; color: var(--text);
+    transition: all 0.15s;
+  }
+  .gate-key:hover { border-color: var(--accent); }
+  .gate-key:active { background: var(--panel2); }
+  .gate-key.empty { background: transparent; border: none; cursor: default; }
+  .gate-key.empty:hover { border-color: transparent; }
+  .gate-key.del { font-size: 14px; color: var(--muted); }
+  .gate-err { color: var(--danger); font-size: 12.5px; height: 18px; margin-top: 14px; font-family: var(--font-body); }
+  .gate-reset { color: var(--accent); font-size: 11.5px; margin-top: 4px; cursor: pointer; text-decoration: underline; font-family: var(--font-body); }
+
+  header { margin-bottom: 30px; display: flex; align-items: baseline; justify-content: space-between; }
+  .logotype-row { display: flex; align-items: baseline; gap: 10px; }
+  .logotype {
+    font-family: var(--font-display); font-size: 42px; font-weight: 700; letter-spacing: 0.02em;
+    color: var(--text); text-transform: uppercase; position: relative; margin: 0; display: inline-block;
+    text-shadow: 0 0 18px rgba(63,217,232,0.45);
+  }
+  .logotype::after {
+    content: ''; display: block; width: 40px; height: 7px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    margin-top: 8px; box-shadow: var(--glow-cyan);
+    clip-path: polygon(0 0, 100% 0, 92% 45%, 100% 55%, 78% 100%, 58% 50%, 38% 100%, 18% 45%, 0 100%);
+  }
+  .logotype .glitch::before, .logotype .glitch::after { letter-spacing: 0.02em; }
+  .version-badge {
+    font-family: var(--font-display); font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em;
+    color: var(--accent2); border: 1px solid var(--accent2-dim); background: rgba(181,101,232,0.10);
+    padding: 3px 8px; border-radius: 20px; text-transform: uppercase; box-shadow: var(--glow-purple);
+    position: relative; top: -2px;
+    animation: badgeFlicker 5s infinite;
+  }
+  @keyframes badgeFlicker {
+    0%, 88%, 100% { opacity: 1; }
+    89% { opacity: 0.35; }
+    90% { opacity: 1; }
+    91% { opacity: 0.55; }
+    92% { opacity: 1; }
+  }
+  .header-date { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  /* Rest timer */
+  .rest-timer {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 16px; margin-bottom: 22px; transition: border-color 0.2s;
+  }
+  .rest-timer.is-running { border-color: var(--accent); }
+  .rest-timer.is-done { border-color: var(--good); }
+  .rest-display {
+    font-family: var(--font-display); font-size: 40px; font-weight: 700; text-align: center;
+    color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; margin-bottom: 12px;
+    transition: color 0.2s;
+  }
+  .rest-timer.is-running .rest-display { color: var(--accent); }
+  .rest-timer.is-done .rest-display { color: var(--good); }
+  .rest-controls { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+  .rest-btn {
+    border: 1px solid var(--line); background: var(--panel2); color: var(--text); cursor: pointer;
+    border-radius: var(--radius-sm); font-family: var(--font-body); transition: all 0.15s;
+  }
+  .rest-btn.rest-adj { flex: none; width: 58px; padding: 10px 4px; font-size: 12px; color: var(--muted); }
+  .rest-btn.rest-adj:hover { border-color: var(--accent); color: var(--accent); }
+  .rest-btn.rest-main {
+    flex: 1; padding: 12px; font-family: var(--font-display); font-weight: 700; font-size: 14px;
+    letter-spacing: 0.03em; text-transform: uppercase; background: var(--accent); color: #051217; border: none;
+  }
+  .rest-btn.rest-main:hover { background: #6ce8f2; box-shadow: var(--glow-cyan); }
+  .rest-btn.rest-main.is-running { background: var(--panel2); color: var(--accent); border: 1px solid var(--accent); }
+  .rest-settings { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .rest-reset {
+    background: transparent; border: none; color: var(--muted); font-size: 11.5px; cursor: pointer;
+    text-decoration: underline; font-family: var(--font-body); padding: 0;
+  }
+  .rest-reset:hover { color: var(--accent); }
+  .rest-default-label {
+    display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--muted); font-family: var(--font-body);
+  }
+  .rest-default-label input {
+    width: 46px; background: var(--panel2); border: 1px solid var(--line); color: var(--text);
+    padding: 4px 6px; border-radius: var(--radius-sm); font-size: 12.5px; font-family: var(--font-body); text-align: center;
+  }
+
+  nav.tabs { display: flex; gap: 2px; margin-bottom: 24px; background: var(--panel); border-radius: var(--radius); padding: 4px; border: 1px solid var(--line); }
+  nav.tabs button {
+    flex: 1; padding: 10px 8px; background: transparent; border: none; color: var(--muted);
+    font-family: var(--font-display); font-size: 12.5px; font-weight: 600; letter-spacing: 0.03em;
+    text-transform: uppercase; cursor: pointer; border-radius: var(--radius-sm); transition: all 0.15s;
+  }
+  nav.tabs button.active { background: var(--panel2); color: var(--accent); }
+
+  .day-select { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; align-items: center; }
+  .day-select button {
+    padding: 8px 14px; background: var(--panel); border: 1px solid var(--line); color: var(--muted);
+    font-family: var(--font-display); font-weight: 600; letter-spacing: 0.02em;
+    border-radius: var(--radius-sm); font-size: 12.5px; cursor: pointer; transition: all 0.15s;
+  }
+  .day-select button.active { border-color: var(--accent); color: var(--accent); background: rgba(63,217,232,0.08); }
+  .edit-toggle {
+    margin-left: auto; padding: 8px 14px; background: var(--panel); border: 1px solid var(--line);
+    color: var(--muted); border-radius: var(--radius-sm); font-size: 12.5px; cursor: pointer; font-family: var(--font-body);
+  }
+  .edit-toggle.active { border-color: var(--accent); color: var(--accent); background: var(--panel2); }
+
+  .exo-card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 16px 18px; margin-bottom: 10px; transition: border-color 0.2s;
+  }
+  .exo-card.saved { border-color: var(--good); }
+  .exo-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .exo-head { display: flex; flex-direction: column; gap: 6px; }
+  .muscle-tag {
+    display: inline-flex; align-self: flex-start; align-items: center; gap: 5px;
+    font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 20px; border: 1px solid;
+    letter-spacing: 0.04em; text-transform: uppercase; font-family: var(--font-display);
+  }
+  .muscle-dot { width: 6px; height: 6px; border-radius: 50%; flex: none; }
+  .exo-name { font-size: 16px; font-weight: 600; line-height: 1.3; letter-spacing: -0.01em; }
+  .exo-target { color: var(--muted); font-size: 12.5px; white-space: nowrap; padding-top: 2px; font-variant-numeric: tabular-nums; }
+
+  .log-row { display: flex; gap: 8px; margin-top: 12px; align-items: center; }
+  .log-row input {
+    background: var(--panel2); border: 1px solid var(--line); color: var(--text);
+    padding: 9px 11px; border-radius: var(--radius-sm); font-size: 14px; font-family: var(--font-body); width: 100%;
+    transition: border-color 0.15s;
+  }
+  .log-row input:focus { outline: none; border-color: var(--accent); }
+  .log-row input::placeholder { color: #5a6265; }
+  .log-row span.unit { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .row-save-btn {
+    flex: none; width: 40px; height: 40px; background: var(--panel2); border: 1px solid var(--line);
+    color: var(--muted); border-radius: var(--radius-sm); cursor: pointer; font-size: 16px; font-family: inherit;
+    transition: all 0.15s;
+  }
+  .row-save-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .row-save-btn.is-saved { background: var(--good); border-color: var(--good); color: #0e1a13; }
+
+  .last-entry { margin-top: 10px; font-size: 12px; color: var(--muted); }
+  .last-entry b { color: var(--accent); font-weight: 600; }
+  .row-status { margin-top: 6px; font-size: 11.5px; color: var(--good); min-height: 14px; }
+
+  .save-bar { position: sticky; bottom: 0; padding-top: 16px; }
+  .save-btn {
+    width: 100%; padding: 15px; background: var(--accent); color: #051217; border: none;
+    border-radius: var(--radius); font-family: var(--font-display); font-size: 14px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; transition: background 0.15s, box-shadow 0.15s;
+  }
+  .save-btn:hover { background: #6ce8f2; box-shadow: var(--glow-cyan); }
+  .save-btn:active { background: var(--accent-dim); }
+  .save-btn:disabled { background: var(--panel2); color: var(--muted); }
+
+  .toast {
+    text-align: center; font-size: 12.5px; color: var(--good); margin-top: 8px; height: 16px;
+  }
+
+  /* History tab */
+  .hist-filters { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .hist-filters select {
+    background: var(--panel); border: 1px solid var(--line); color: var(--text); padding: 8px 10px;
+    border-radius: var(--radius); font-size: 13px; font-family: inherit;
+  }
+  table.hist { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.hist th {
+    text-align: left; color: var(--muted); font-weight: 500; font-size: 11.5px;
+    padding: 8px 6px; border-bottom: 1px solid var(--line);
+  }
+  table.hist td { padding: 9px 6px; border-bottom: 1px solid var(--line); }
+  table.hist tr:last-child td { border-bottom: none; }
+  .del-btn {
+    background: transparent; border: 1px solid var(--line); color: var(--muted);
+    border-radius: var(--radius); padding: 4px 8px; font-size: 12px; cursor: pointer; font-family: inherit;
+  }
+  .del-btn:hover { border-color: var(--danger); color: var(--danger); }
+  .empty-state { text-align: center; color: var(--muted); padding: 40px 20px; font-size: 13.5px; }
+  .prog-up { color: var(--good); }
+  .prog-down { color: var(--danger); }
+
+  .stat-row { display: flex; gap: 10px; margin-bottom: 20px; }
+  .stat { flex: 1; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
+  .stat .n { font-family: var(--font-display); font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .stat .l { font-size: 11px; color: var(--muted); margin-top: 3px; letter-spacing: 0.01em; }
+
+  .note {
+    font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 20px;
+    padding-top: 14px; border-top: 1px solid var(--line);
+  }
+
+  /* Edit mode */
+  .exo-card.editing { border-color: var(--accent); }
+  .edit-fields { display: flex; flex-direction: column; gap: 8px; }
+  .edit-fields input, .edit-fields select {
+    background: var(--panel2); border: 1px solid var(--line); color: var(--text);
+    padding: 8px 10px; border-radius: var(--radius); font-size: 13.5px; font-family: inherit; width: 100%;
+  }
+  .edit-fields-row { display: flex; gap: 8px; }
+  .edit-fields-row select { flex: 1; }
+  .edit-fields-row input { flex: 1; }
+  .custom-save-label {
+    display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 11.5px; color: var(--muted);
+    cursor: pointer;
+  }
+  .custom-save-label input[type="checkbox"] { width: auto; margin: 0; }
+  .edit-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .edit-actions button {
+    flex: 1; padding: 8px; border-radius: var(--radius); font-size: 12.5px; cursor: pointer; font-family: inherit;
+    border: 1px solid var(--line); background: var(--panel2); color: var(--text);
+  }
+  .edit-actions .exo-del-btn { color: var(--danger); border-color: var(--danger); background: transparent; }
+  .edit-actions .exo-edit-btn { color: var(--accent); border-color: var(--accent); background: transparent; }
+  .add-exo-btn {
+    width: 100%; padding: 12px; background: var(--panel); border: 1px dashed var(--line); color: var(--muted);
+    border-radius: var(--radius); font-size: 13px; cursor: pointer; font-family: inherit; margin-bottom: 10px;
+  }
+  .add-exo-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .restore-row { text-align: center; margin-top: 4px; }
+  .restore-row button {
+    background: transparent; border: none; color: var(--muted); font-size: 11.5px; text-decoration: underline;
+    cursor: pointer; font-family: inherit;
+  }
+
+  /* Poids tab */
+  .poids-stats { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .poids-stat { flex: 1; min-width: 120px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; }
+  .poids-stat .n { font-family: var(--font-display); font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .poids-stat .l { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .poids-stat .n.pos { color: var(--good); }
+
+  .poids-form { display: flex; gap: 8px; margin-bottom: 20px; }
+  .poids-form input {
+    background: var(--panel2); border: 1px solid var(--line); color: var(--text);
+    padding: 10px 12px; border-radius: var(--radius-sm); font-size: 14px; font-family: var(--font-body);
+  }
+  .poids-form input[type="number"] { flex: 1; }
+  .poids-form input[type="date"] { flex: 1; }
+  .poids-form button {
+    padding: 10px 18px; background: var(--accent); color: #051217; border: none;
+    border-radius: var(--radius-sm); font-family: var(--font-display); font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.03em; cursor: pointer;
+  }
+
+  .chart-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; margin-bottom: 20px; }
+  .chart-card svg { width: 100%; height: auto; display: block; }
+  .chart-legend { display: flex; gap: 16px; margin-top: 10px; font-size: 11.5px; color: var(--muted); }
+  .chart-legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .chart-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .exo-chart-title {
+    font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: 0.02em;
+    color: var(--text); margin-bottom: 12px; text-transform: uppercase;
+  }
+
+  .objectif-row { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; font-size: 12.5px; color: var(--muted); }
+  .objectif-row input {
+    background: var(--panel2); border: 1px solid var(--line); color: var(--text);
+    padding: 6px 8px; border-radius: var(--radius); font-size: 13px; font-family: inherit; width: 70px;
+  }
+
+  /* Backup */
+  .backup-card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px; margin-top: 20px;
+  }
+  .backup-title { font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: 0.02em; margin-bottom: 4px; text-transform: uppercase; color: var(--muted); }
+  .backup-sub { font-size: 11.5px; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
+  .backup-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .backup-actions button, .backup-actions label {
+    flex: 1; min-width: 140px; text-align: center; padding: 10px; background: var(--panel2);
+    border: 1px solid var(--line); color: var(--text); border-radius: var(--radius);
+    font-size: 12.5px; cursor: pointer; font-family: inherit;
+  }
+  .backup-actions button:hover, .backup-actions label:hover { border-color: var(--accent); color: var(--accent); }
+  .backup-msg { font-size: 11.5px; margin-top: 10px; min-height: 14px; }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-title"><span class="glitch" data-text="FORGE">FORGE</span></div>
+  <div class="gate-sub" id="gateSub">Choisis ton code à 4 chiffres pour protéger tes données.</div>
+  <div class="gate-dots">
+    <div class="gate-dot" id="gd0"></div>
+    <div class="gate-dot" id="gd1"></div>
+    <div class="gate-dot" id="gd2"></div>
+    <div class="gate-dot" id="gd3"></div>
+  </div>
+  <div class="gate-pad">
+    <button class="gate-key" data-k="1">1</button>
+    <button class="gate-key" data-k="2">2</button>
+    <button class="gate-key" data-k="3">3</button>
+    <button class="gate-key" data-k="4">4</button>
+    <button class="gate-key" data-k="5">5</button>
+    <button class="gate-key" data-k="6">6</button>
+    <button class="gate-key" data-k="7">7</button>
+    <button class="gate-key" data-k="8">8</button>
+    <button class="gate-key" data-k="9">9</button>
+    <button class="gate-key empty"></button>
+    <button class="gate-key" data-k="0">0</button>
+    <button class="gate-key del" id="gateDel">&#x232B;</button>
+  </div>
+  <div class="gate-err" id="gateErr"></div>
+  <div class="gate-reset" id="gateReset" style="display:none;">Code oublié ? Réinitialiser</div>
+</div>
+
+<div id="app-content">
+<div class="wrap">
+  <header>
+    <div class="logotype-row">
+      <div class="logotype"><span class="glitch" data-text="Forge">Forge</span></div>
+      <span class="version-badge">V2</span>
+    </div>
+    <div class="header-date" id="headerDate"></div>
+  </header>
+
+  <div class="rest-timer" id="restTimer">
+    <div class="rest-display" id="restDisplay">01:00</div>
+    <div class="rest-controls">
+      <button class="rest-btn rest-adj" id="restMinus">−15s</button>
+      <button class="rest-btn rest-main" id="restToggle">▶ Démarrer</button>
+      <button class="rest-btn rest-adj" id="restPlus">+15s</button>
+    </div>
+    <div class="rest-settings">
+      <button class="rest-reset" id="restReset" title="Réinitialiser">↺ Réinitialiser</button>
+      <label class="rest-default-label">
+        Défaut
+        <input type="number" id="restDefaultInput" min="5" step="5" value="60">s
+      </label>
+    </div>
+  </div>
+
+  <nav class="tabs">
+    <button class="active" data-tab="seance">Séance du jour</button>
+    <button data-tab="historique">Historique</button>
+    <button data-tab="poids">Poids</button>
+  </nav>
+
+  <div id="tab-seance">
+    <div class="day-select" id="daySelect"></div>
+    <div id="exoList"></div>
+    <div class="save-bar">
+      <button class="save-btn" id="saveBtn">Terminer la séance</button>
+      <div class="toast" id="toast"></div>
+    </div>
+  </div>
+
+  <div id="tab-historique" style="display:none;">
+    <div class="stat-row">
+      <div class="stat"><div class="n" id="statSeances">0</div><div class="l">séances loguées</div></div>
+      <div class="stat"><div class="n" id="statDerniere">—</div><div class="l">dernière séance</div></div>
+    </div>
+    <div class="hist-filters">
+      <select id="filterDay">
+        <option value="all">Tous les jours</option>
+      </select>
+      <select id="filterExo">
+        <option value="all">Tous les exercices</option>
+      </select>
+    </div>
+    <div id="exoChartCard" class="chart-card" style="display:none;">
+      <div class="exo-chart-title" id="exoChartTitle"></div>
+      <div id="exoChartContainer"></div>
+      <div class="chart-legend">
+        <span><span class="chart-dot" style="background: var(--accent);"></span>Poids soulevé</span>
+      </div>
+    </div>
+    <div id="histContent"></div>
+  </div>
+
+  <div id="tab-poids" style="display:none;">
+    <div class="objectif-row">
+      Objectif : <input type="number" id="objectifInput" step="0.5" min="0"> kg
+      <span id="objectifSaved" style="color: var(--good); font-size: 11px;"></span>
+    </div>
+    <div class="poids-stats">
+      <div class="poids-stat"><div class="n" id="poidsDepart">—</div><div class="l">poids de départ</div></div>
+      <div class="poids-stat"><div class="n" id="poidsActuel">—</div><div class="l">poids actuel</div></div>
+      <div class="poids-stat"><div class="n pos" id="poidsRestant">—</div><div class="l">reste à perdre</div></div>
+    </div>
+    <div class="poids-form">
+      <input type="date" id="poidsDate">
+      <input type="number" id="poidsValeur" placeholder="Poids (kg)" step="0.1" min="0">
+      <button id="poidsSaveBtn">Ajouter</button>
+    </div>
+    <div class="chart-card">
+      <div id="chartContainer"></div>
+      <div class="chart-legend">
+        <span><span class="chart-dot" style="background: var(--accent);"></span>Pesées</span>
+        <span><span class="chart-dot" style="background: var(--good);"></span>Moyenne mobile (7 pesées)</span>
+      </div>
+    </div>
+    <div id="poidsHistContent"></div>
+  </div>
+
+  <div class="note">
+    Chaque ligne se sauvegarde dès que tu cliques sur ✓, directement sur la machine. Le bouton en bas sert juste à clore la séance. Les données restent stockées sur cet appareil/navigateur (localStorage) — pas de synchronisation entre plusieurs appareils.
+  </div>
+
+  <div class="backup-card">
+    <div class="backup-title">Sauvegarde</div>
+    <div class="backup-sub">Exporte un fichier de secours régulièrement, surtout avant de changer de téléphone ou de navigateur. L'import remplace toutes les données actuelles sur cet appareil.</div>
+    <div class="backup-actions">
+      <button id="exportBtn">⬇ Exporter mes données</button>
+      <label for="importFile">⬆ Importer une sauvegarde</label>
+      <input type="file" id="importFile" accept=".json" style="display:none;">
+    </div>
+    <div class="backup-msg" id="backupMsg"></div>
+  </div>
+</div>
+</div>
+
+<script>
+// ═══ PIN GATE ═══
+const KEY_PIN = "forge_pin";
+let gateBuf = '';
+let gateStep = ''; // 'create1', 'create2', 'verify'
+let gateFirstEntry = '';
+
+function gateUpdateDots() {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById('gd' + i).classList.toggle('filled', i < gateBuf.length);
+  }
+}
+
+function gateStart() {
+  const savedPin = localStorage.getItem(KEY_PIN);
+  const sub = document.getElementById('gateSub');
+  const reset = document.getElementById('gateReset');
+  if (savedPin) {
+    gateStep = 'verify';
+    sub.textContent = "Entre ton code.";
+    reset.style.display = 'block';
+  } else {
+    gateStep = 'create1';
+    sub.textContent = "Choisis ton code à 4 chiffres pour protéger tes données.";
+    reset.style.display = 'none';
+  }
+  gateBuf = '';
+  gateUpdateDots();
+  document.getElementById('gateErr').textContent = '';
+}
+
+function gateKeyPress(k) {
+  if (gateBuf.length >= 4) return;
+  gateBuf += k;
+  gateUpdateDots();
+  if (gateBuf.length === 4) setTimeout(gateCheck, 150);
+}
+
+function gateDelete() {
+  gateBuf = gateBuf.slice(0, -1);
+  gateUpdateDots();
+  document.getElementById('gateErr').textContent = '';
+}
+
+function gateCheck() {
+  const err = document.getElementById('gateErr');
+  const sub = document.getElementById('gateSub');
+
+  if (gateStep === 'create1') {
+    gateFirstEntry = gateBuf;
+    gateBuf = '';
+    gateUpdateDots();
+    gateStep = 'create2';
+    sub.textContent = "Confirme ton code.";
+    return;
+  }
+
+  if (gateStep === 'create2') {
+    if (gateBuf === gateFirstEntry) {
+      localStorage.setItem(KEY_PIN, gateBuf);
+      unlockApp();
+    } else {
+      err.textContent = "Les codes ne correspondent pas, recommence.";
+      gateBuf = '';
+      gateFirstEntry = '';
+      gateStep = 'create1';
+      sub.textContent = "Choisis ton code à 4 chiffres pour protéger tes données.";
+      gateUpdateDots();
+    }
+    return;
+  }
+
+  if (gateStep === 'verify') {
+    const savedPin = localStorage.getItem(KEY_PIN);
+    if (gateBuf === savedPin) {
+      unlockApp();
+    } else {
+      err.textContent = "Code incorrect.";
+      gateBuf = '';
+      gateUpdateDots();
+    }
+  }
+}
+
+function gateReset() {
+  if (!confirm("Réinitialiser le code va te permettre d'en choisir un nouveau. Tes séances et pesées restent intactes. Continuer ?")) return;
+  localStorage.removeItem(KEY_PIN);
+  gateStart();
+}
+
+function unlockApp() {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('app-content').style.display = 'block';
+  initApp();
+}
+
+document.querySelectorAll('.gate-key[data-k]').forEach(btn => {
+  btn.addEventListener('click', () => gateKeyPress(btn.dataset.k));
+});
+document.getElementById('gateDel').addEventListener('click', gateDelete);
+document.getElementById('gateReset').addEventListener('click', gateReset);
+gateStart();
+
+const DEFAULT_PROGRAM = {
+  "Haut A": [
+    { name: "Chest Press (développé couché machine)", target: "4×8-10", muscle: "Pectoraux" },
+    { name: "Lat Pulldown (tirage vertical)", target: "4×8-10", muscle: "Dos" },
+    { name: "Shoulder Press (épaules machine)", target: "3×10", muscle: "Épaules" },
+    { name: "Seated Row (rowing poulie basse)", target: "3×10", muscle: "Dos" },
+    { name: "Élévations latérales (haltères)", target: "3×12", muscle: "Épaules" },
+    { name: "Curl biceps (haltères)", target: "3×12", muscle: "Biceps" },
+    { name: "Triceps Pushdown (poulie)", target: "3×12", muscle: "Triceps" }
+  ],
+  "Bas A": [
+    { name: "Leg Press (presse à cuisses)", target: "4×10", muscle: "Jambes" },
+    { name: "Leg Curl (ischio-jambiers)", target: "3×12", muscle: "Jambes" },
+    { name: "Leg Extension (quadriceps)", target: "3×12", muscle: "Jambes" },
+    { name: "Calf Press / mollets", target: "3×15", muscle: "Mollets" },
+    { name: "Gainage planche", target: "3×30-45s", muscle: "Abdos" }
+  ],
+  "Haut B": [
+    { name: "Chest Press incliné", target: "4×8-10", muscle: "Pectoraux" },
+    { name: "Row poulie haute (prise différente)", target: "4×8-10", muscle: "Dos" },
+    { name: "Shoulder Press (haltères)", target: "3×10", muscle: "Épaules" },
+    { name: "Tirage horizontal", target: "3×10", muscle: "Dos" },
+    { name: "Oiseau / Rear Delt (arrière épaules)", target: "3×12", muscle: "Épaules" },
+    { name: "Curl marteau", target: "3×12", muscle: "Biceps" },
+    { name: "Dips machine / poulie", target: "3×12", muscle: "Triceps" }
+  ],
+  "Bas B": [
+    { name: "Smith Machine ou Hack Squat", target: "4×10", muscle: "Jambes" },
+    { name: "Fentes ou Leg Press unilatéral", target: "3×10/jambe", muscle: "Jambes" },
+    { name: "Leg Curl allongé", target: "3×12", muscle: "Jambes" },
+    { name: "Calf assis (variante)", target: "3×15", muscle: "Mollets" },
+    { name: "Gainage latéral", target: "3×20-30s/côté", muscle: "Abdos" }
+  ]
+};
+
+const KEY_PROGRAM = "forge_program";
+let PROGRAM = {};
+let DAYS = [];
+
+function loadProgram() {
+  try {
+    const raw = localStorage.getItem(KEY_PROGRAM);
+    PROGRAM = raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(DEFAULT_PROGRAM));
+  } catch (e) {
+    PROGRAM = JSON.parse(JSON.stringify(DEFAULT_PROGRAM));
+  }
+  DAYS = Object.keys(PROGRAM);
+}
+
+function saveProgram() {
+  try {
+    localStorage.setItem(KEY_PROGRAM, JSON.stringify(PROGRAM));
+  } catch (e) {
+    console.error("Erreur sauvegarde programme", e);
+  }
+}
+
+const MUSCLE_COLORS = {
+  "Pectoraux": "#e8c250",
+  "Dos": "#3ee89a",
+  "Épaules": "#5ab8e8",
+  "Biceps": "#ff6b81",
+  "Triceps": "#d43fd6",
+  "Jambes": "#ff9f4d",
+  "Mollets": "#4de0e8",
+  "Abdos": "#8fe85a"
+};
+const MUSCLE_OPTIONS = Object.keys(MUSCLE_COLORS);
+
+// Catalogue générique des machines de la gamme Technogym (Selection/Pure Strength) les plus courantes.
+// Les noms exacts peuvent varier légèrement selon le modèle présent dans une salle donnée —
+// l'option "Autre / nom personnalisé" reste disponible pour corriger si besoin.
+const TECHNOGYM_CATALOG = {
+  "Pectoraux": ["Chest Press", "Chest Press Vertical", "Pec Fly / Rear Delt", "Cable Crossover (poulie vis-à-vis)"],
+  "Dos": ["Vertical Traction (tirage vertical)", "Horizontal Traction / Low Row (tirage horizontal)", "Lat Machine", "Pulley Row (rowing poulie)"],
+  "Épaules": ["Shoulder Press", "Lateral Raise (élévations latérales)", "Rear Delt / Oiseau"],
+  "Biceps": ["Arm Curl", "Biceps Curl (poulie basse)"],
+  "Triceps": ["Arm Extension", "Triceps Pushdown (poulie haute)"],
+  "Jambes": ["Leg Press", "Leg Extension", "Leg Curl (assis)", "Leg Curl (allongé)", "Adductor", "Abductor", "Hack Squat", "Multipower / Smith Machine"],
+  "Mollets": ["Calf Press", "Standing Calf"],
+  "Abdos": ["Abdominal Crunch", "Rotary Torso", "Lower Back", "Gainage (au sol, sans machine)"],
+  "Autre": ["Dip & Chin Assist", "Pulley Multistation", "Cable Station"]
+};
+
+const KEY_CUSTOM_CATALOG = "forge_custom_catalog";
+let customCatalog = {};
+
+function loadCustomCatalog() {
+  try {
+    const raw = localStorage.getItem(KEY_CUSTOM_CATALOG);
+    customCatalog = raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    customCatalog = {};
+  }
+}
+
+function saveCustomCatalog() {
+  try {
+    localStorage.setItem(KEY_CUSTOM_CATALOG, JSON.stringify(customCatalog));
+  } catch (e) {
+    console.error("Erreur sauvegarde catalogue", e);
+  }
+}
+
+function getCatalog() {
+  const merged = {};
+  Object.keys(TECHNOGYM_CATALOG).forEach(g => { merged[g] = [...TECHNOGYM_CATALOG[g]]; });
+  Object.keys(customCatalog).forEach(g => {
+    if (!merged[g]) merged[g] = [];
+    customCatalog[g].forEach(name => {
+      if (!merged[g].includes(name)) merged[g].push(name);
+    });
+  });
+  return merged;
+}
+
+function addToCustomCatalog(group, name) {
+  const catalog = getCatalog();
+  if (catalog[group] && catalog[group].includes(name)) return;
+  if (!customCatalog[group]) customCatalog[group] = [];
+  if (!customCatalog[group].includes(name)) {
+    customCatalog[group].push(name);
+    saveCustomCatalog();
+  }
+}
+
+function removeFromCustomCatalog(group, name) {
+  if (!customCatalog[group]) return;
+  customCatalog[group] = customCatalog[group].filter(m => m !== name);
+  saveCustomCatalog();
+}
+
+let currentDay = null;
+let editMode = false;
+let allLogs = [];
+let savedThisSession = {}; // idx -> true, tracks which rows saved during current viewing of this day/date
+
+const KEY_LOGS = "muscu_logs";
+
+function loadLogs() {
+  try {
+    const raw = localStorage.getItem(KEY_LOGS);
+    allLogs = raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    allLogs = [];
+  }
+}
+
+function saveLogsToStorage() {
+  try {
+    localStorage.setItem(KEY_LOGS, JSON.stringify(allLogs));
+    return true;
+  } catch (e) {
+    console.error("Erreur de sauvegarde", e);
+    return false;
+  }
+}
+
+function todayStr() {
+  const d = new Date();
+  return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+function lastEntryFor(exoName) {
+  const entries = allLogs.filter(l => l.exo === exoName).sort((a,b) => b.ts - a.ts);
+  return entries[0] || null;
+}
+
+function renderDaySelect() {
+  const el = document.getElementById('daySelect');
+  el.innerHTML = '';
+  DAYS.forEach(day => {
+    const btn = document.createElement('button');
+    btn.textContent = day;
+    if (day === currentDay) btn.classList.add('active');
+    btn.onclick = () => { currentDay = day; savedThisSession = {}; renderDaySelect(); renderExoList(); };
+    el.appendChild(btn);
+  });
+  const editBtn = document.createElement('button');
+  editBtn.className = 'edit-toggle' + (editMode ? ' active' : '');
+  editBtn.textContent = editMode ? 'Terminer' : '✏️ Modifier';
+  editBtn.onclick = () => { editMode = !editMode; renderDaySelect(); renderExoList(); };
+  el.appendChild(editBtn);
+}
+
+function saveRow(idx) {
+  const exos = PROGRAM[currentDay];
+  const poidsInput = document.querySelector(`input[data-field="poids"][data-idx="${idx}"]`);
+  const repsInput = document.querySelector(`input[data-field="reps"][data-idx="${idx}"]`);
+  const statusEl = document.querySelector(`.row-status[data-idx="${idx}"]`);
+  const btn = document.querySelector(`.row-save-btn[data-idx="${idx}"]`);
+  const card = document.querySelector(`.exo-card[data-idx="${idx}"]`);
+
+  const poids = poidsInput.value;
+  const reps = repsInput.value;
+
+  if (!poids || !reps) {
+    statusEl.style.color = "var(--danger)";
+    statusEl.textContent = "Renseigne poids et reps avant de valider.";
+    return;
+  }
+
+  allLogs.push({
+    id: `${Date.now()}_${Math.random().toString(36).slice(2,7)}`,
+    day: currentDay,
+    exo: exos[idx].name,
+    poids: parseFloat(poids),
+    reps: parseInt(reps),
+    date: todayStr(),
+    ts: Date.now()
+  });
+  saveLogsToStorage();
+  savedThisSession[idx] = true;
+
+  btn.classList.add('is-saved');
+  btn.textContent = '✓';
+  card.classList.add('saved');
+  statusEl.style.color = "var(--good)";
+  statusEl.textContent = "Ligne enregistrée.";
+}
+
+function muscleOptionsHtml(selected) {
+  return MUSCLE_OPTIONS.map(m => `<option value="${m}" ${m === selected ? 'selected' : ''}>${m}</option>`).join('');
+}
+
+function saveExoEdit(idx) {
+  const machineSelect = document.querySelector(`.edit-machine[data-idx="${idx}"]`);
+  const customInput = document.querySelector(`.edit-name-custom[data-idx="${idx}"]`);
+  const customSaveCheckbox = document.querySelector(`.edit-name-custom-save[data-idx="${idx}"]`);
+  const muscleSelect = document.querySelector(`.edit-muscle[data-idx="${idx}"]`);
+  const targetInput = document.querySelector(`.edit-target[data-idx="${idx}"]`);
+
+  let name;
+  const isCustom = machineSelect.value === '__custom__';
+  if (isCustom) {
+    name = customInput.value.trim();
+  } else {
+    name = machineSelect.value;
+  }
+  if (!name) { alert("Le nom de l'exercice ne peut pas être vide."); return; }
+
+  if (isCustom && customSaveCheckbox && customSaveCheckbox.checked) {
+    addToCustomCatalog(muscleSelect.value, name);
+  }
+
+  PROGRAM[currentDay][idx] = {
+    name: name,
+    muscle: muscleSelect.value,
+    target: targetInput.value.trim() || '—'
+  };
+  saveProgram();
+  renderExoList();
+}
+
+function deleteExo(idx) {
+  if (!confirm("Retirer cet exercice de ce jour de programme ? Les séries déjà enregistrées pour lui restent dans ton historique.")) return;
+  PROGRAM[currentDay].splice(idx, 1);
+  saveProgram();
+  renderExoList();
+}
+
+function addExo() {
+  PROGRAM[currentDay].push({ name: "Nouvel exercice", muscle: MUSCLE_OPTIONS[0], target: "3×10" });
+  saveProgram();
+  renderExoList();
+}
+
+function resetProgramDefault() {
+  if (!confirm("Réinitialiser le programme aux réglages d'origine ? Tes personnalisations d'exercices seront perdues (tes séances et pesées restent intactes).")) return;
+  PROGRAM = JSON.parse(JSON.stringify(DEFAULT_PROGRAM));
+  DAYS = Object.keys(PROGRAM);
+  if (!DAYS.includes(currentDay)) currentDay = DAYS[0];
+  saveProgram();
+  renderDaySelect();
+  renderExoList();
+}
+
+function allCatalogMachines() {
+  const catalog = getCatalog();
+  const flat = [];
+  Object.values(catalog).forEach(list => list.forEach(m => flat.push(m)));
+  return flat;
+}
+
+function groupForMachine(name) {
+  const catalog = getCatalog();
+  return Object.keys(catalog).find(g => catalog[g].includes(name)) || null;
+}
+
+function machineSelectHtml(idx, currentName) {
+  const catalog = getCatalog();
+  const inCatalog = allCatalogMachines().includes(currentName);
+  let html = '';
+  Object.keys(catalog).forEach(group => {
+    html += `<optgroup label="${group}">`;
+    catalog[group].forEach(m => {
+      html += `<option value="${m.replace(/"/g, '&quot;')}" ${m === currentName ? 'selected' : ''}>${m}</option>`;
+    });
+    html += `</optgroup>`;
+  });
+  html += `<option value="__custom__" ${!inCatalog ? 'selected' : ''}>Autre / nom personnalisé…</option>`;
+  return html;
+}
+
+function onMachineSelectChange(idx) {
+  const select = document.querySelector(`.edit-machine[data-idx="${idx}"]`);
+  const customWrap = document.querySelector(`.edit-name-custom-wrap[data-idx="${idx}"]`);
+  const muscleSelect = document.querySelector(`.edit-muscle[data-idx="${idx}"]`);
+  const isCustom = select.value === '__custom__';
+  customWrap.style.display = isCustom ? 'block' : 'none';
+
+  if (!isCustom) {
+    const group = groupForMachine(select.value);
+    if (group && MUSCLE_OPTIONS.includes(group) && muscleSelect) {
+      muscleSelect.value = group;
+    }
+  }
+}
+
+function renderExoList() {
+  const el = document.getElementById('exoList');
+  el.innerHTML = '';
+
+  PROGRAM[currentDay].forEach((exo, idx) => {
+    const card = document.createElement('div');
+    card.className = 'exo-card' + (editMode ? ' editing' : '');
+    card.dataset.idx = idx;
+
+    if (editMode) {
+      const inCatalog = allCatalogMachines().includes(exo.name);
+      const groupForName = groupForMachine(exo.name);
+      const effectiveMuscle = (groupForName && MUSCLE_OPTIONS.includes(groupForName)) ? groupForName : exo.muscle;
+      card.innerHTML = `
+        <div class="edit-fields">
+          <select class="edit-machine" data-idx="${idx}">${machineSelectHtml(idx, exo.name)}</select>
+          <div class="edit-name-custom-wrap" data-idx="${idx}" style="display:${inCatalog ? 'none' : 'block'};">
+            <input type="text" class="edit-name-custom" data-idx="${idx}" value="${inCatalog ? '' : exo.name.replace(/"/g, '&quot;')}" placeholder="Nom de la machine (si absente du catalogue)">
+            <label class="custom-save-label">
+              <input type="checkbox" class="edit-name-custom-save" data-idx="${idx}" checked>
+              Mémoriser cette machine dans le catalogue
+            </label>
+          </div>
+          <div class="edit-fields-row">
+            <select class="edit-muscle" data-idx="${idx}">${muscleOptionsHtml(effectiveMuscle)}</select>
+            <input type="text" class="edit-target" data-idx="${idx}" value="${exo.target}" placeholder="Ex: 3×10">
+          </div>
+        </div>
+        <div class="edit-actions">
+          <button class="exo-edit-btn" data-idx="${idx}">Enregistrer</button>
+          <button class="exo-del-btn" data-idx="${idx}">Retirer</button>
+        </div>
+      `;
+      el.appendChild(card);
+      return;
+    }
+
+    const last = lastEntryFor(exo.name);
+    const lastHtml = last
+      ? `<div class="last-entry">Dernière fois (${last.date}) : <b>${last.poids} kg</b> × ${last.reps} reps</div>`
+      : `<div class="last-entry">Pas encore de données</div>`;
+
+    const color = MUSCLE_COLORS[exo.muscle] || 'var(--accent)';
+    card.innerHTML = `
+      <div class="exo-top">
+        <div class="exo-head">
+          <div class="muscle-tag" style="color:${color}; border-color:${color};">
+            <span class="muscle-dot" style="background:${color};"></span>${exo.muscle}
+          </div>
+          <div class="exo-name">${exo.name}</div>
+        </div>
+        <div class="exo-target">${exo.target}</div>
+      </div>
+      <div class="log-row">
+        <input type="number" inputmode="decimal" placeholder="Poids" data-field="poids" data-idx="${idx}" step="0.5" min="0">
+        <span class="unit">kg</span>
+        <input type="number" inputmode="numeric" placeholder="Reps" data-field="reps" data-idx="${idx}" min="0">
+        <span class="unit">reps</span>
+        <button class="row-save-btn" data-idx="${idx}" title="Enregistrer cette ligne">✓</button>
+      </div>
+      <div class="row-status" data-idx="${idx}"></div>
+      ${lastHtml}
+    `;
+    el.appendChild(card);
+  });
+
+  if (editMode) {
+    const addBtn = document.createElement('button');
+    addBtn.className = 'add-exo-btn';
+    addBtn.textContent = '+ Ajouter un exercice à ce jour';
+    addBtn.onclick = addExo;
+    el.appendChild(addBtn);
+
+    const restoreRow = document.createElement('div');
+    restoreRow.className = 'restore-row';
+    restoreRow.innerHTML = `<button id="restoreProgramBtn">Réinitialiser tout le programme aux réglages d'origine</button>`;
+    el.appendChild(restoreRow);
+    document.getElementById('restoreProgramBtn').addEventListener('click', resetProgramDefault);
+
+    el.querySelectorAll('.exo-edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => saveExoEdit(btn.dataset.idx));
+    });
+    el.querySelectorAll('.exo-del-btn').forEach(btn => {
+      btn.addEventListener('click', () => deleteExo(btn.dataset.idx));
+    });
+    el.querySelectorAll('.edit-machine').forEach(sel => {
+      sel.addEventListener('change', () => onMachineSelectChange(sel.dataset.idx));
+    });
+    return;
+  }
+
+  el.querySelectorAll('.row-save-btn').forEach(btn => {
+    btn.addEventListener('click', () => saveRow(btn.dataset.idx));
+  });
+}
+
+function finishSession() {
+  const toast = document.getElementById('toast');
+  const count = Object.keys(savedThisSession).length;
+  if (count === 0) {
+    toast.style.color = "var(--danger)";
+    toast.textContent = "Aucune ligne enregistrée pour cette séance pour le moment.";
+    return;
+  }
+  toast.style.color = "var(--good)";
+  toast.textContent = `Séance clôturée — ${count} exercice(s) enregistré(s) aujourd'hui.`;
+  renderHistory();
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.getElementById('tab-seance').style.display = tab === 'seance' ? 'block' : 'none';
+  document.getElementById('tab-historique').style.display = tab === 'historique' ? 'block' : 'none';
+  document.getElementById('tab-poids').style.display = tab === 'poids' ? 'block' : 'none';
+  if (tab === 'historique') renderHistory();
+  if (tab === 'poids') renderPoids();
+}
+
+function deleteEntry(id) {
+  if (!confirm("Supprimer cette ligne ?")) return;
+  allLogs = allLogs.filter(l => l.id !== id);
+  saveLogsToStorage();
+  renderHistory();
+  renderExoList();
+}
+
+function renderHistory() {
+  const statSeances = document.getElementById('statSeances');
+  const statDerniere = document.getElementById('statDerniere');
+  const filterDay = document.getElementById('filterDay');
+  const filterExo = document.getElementById('filterExo');
+  const content = document.getElementById('histContent');
+
+  const uniqueDates = new Set(allLogs.map(l => l.date));
+  statSeances.textContent = uniqueDates.size;
+  const sorted = [...allLogs].sort((a,b) => b.ts - a.ts);
+  statDerniere.textContent = sorted.length ? sorted[0].date : '—';
+
+  if (filterDay.options.length <= 1) {
+    DAYS.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d; opt.textContent = d;
+      filterDay.appendChild(opt);
+    });
+  }
+  const dayVal = filterDay.value;
+  const exoVal = filterExo.value;
+  filterExo.innerHTML = '<option value="all">Tous les exercices</option>';
+  const exoSet = new Set();
+  (dayVal === 'all' ? DAYS : [dayVal]).forEach(d => PROGRAM[d].forEach(e => exoSet.add(e.name)));
+  exoSet.forEach(name => {
+    const opt = document.createElement('option');
+    opt.value = name; opt.textContent = name;
+    filterExo.appendChild(opt);
+  });
+  if ([...exoSet].includes(exoVal)) filterExo.value = exoVal;
+
+  let filtered = allLogs;
+  if (filterDay.value !== 'all') filtered = filtered.filter(l => l.day === filterDay.value);
+  if (filterExo.value !== 'all') filtered = filtered.filter(l => l.exo === filterExo.value);
+  filtered = [...filtered].sort((a,b) => b.ts - a.ts);
+
+  updateExoChart(filtered, filterExo.value);
+
+  if (filtered.length === 0) {
+    content.innerHTML = '<div class="empty-state">Aucune séance enregistrée pour l\'instant. Renseigne tes premières séries dans l\'onglet "Séance du jour".</div>';
+    return;
+  }
+
+  let rows = '';
+  filtered.forEach((l, i) => {
+    const olderSameExo = filtered.slice(i+1).find(x => x.exo === l.exo);
+    let arrow = '';
+    if (olderSameExo) {
+      if (l.poids > olderSameExo.poids) arrow = '<span class="prog-up">▲</span>';
+      else if (l.poids < olderSameExo.poids) arrow = '<span class="prog-down">▼</span>';
+    }
+    rows += `<tr>
+      <td>${l.date}</td>
+      <td>${l.day}</td>
+      <td>${l.exo}</td>
+      <td>${l.poids} kg ${arrow}</td>
+      <td>${l.reps}</td>
+      <td><button class="del-btn" data-id="${l.id}">Suppr.</button></td>
+    </tr>`;
+  });
+
+  content.innerHTML = `
+    <table class="hist">
+      <thead><tr><th>Date</th><th>Jour</th><th>Exercice</th><th>Poids</th><th>Reps</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+
+  content.querySelectorAll('.del-btn').forEach(btn => {
+    btn.addEventListener('click', () => deleteEntry(btn.dataset.id));
+  });
+}
+
+function updateExoChart(filteredLogs, exoName) {
+  const card = document.getElementById('exoChartCard');
+  const container = document.getElementById('exoChartContainer');
+  const title = document.getElementById('exoChartTitle');
+
+  if (exoName === 'all') {
+    card.style.display = 'none';
+    return;
+  }
+
+  const points = [...filteredLogs].sort((a, b) => a.ts - b.ts);
+  title.textContent = exoName;
+
+  if (points.length < 2) {
+    card.style.display = 'block';
+    container.innerHTML = '<div class="empty-state">Ajoute au moins 2 séances sur cet exercice pour voir sa courbe de progression.</div>';
+    return;
+  }
+
+  card.style.display = 'block';
+
+  const W = 640, H = 200, PAD = 30;
+  const poidsVals = points.map(p => p.poids);
+  const minP = Math.min(...poidsVals) - (Math.min(...poidsVals) > 2 ? 2 : 0);
+  const maxP = Math.max(...poidsVals) + 2;
+  const minTs = points[0].ts;
+  const maxTs = points[points.length - 1].ts;
+  const tsRange = maxTs - minTs || 1;
+
+  function x(ts) { return PAD + ((ts - minTs) / tsRange) * (W - PAD * 2); }
+  function y(poids) { return H - PAD - ((poids - minP) / ((maxP - minP) || 1)) * (H - PAD * 2); }
+
+  const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${x(p.ts).toFixed(1)} ${y(p.poids).toFixed(1)}`).join(' ');
+
+  const dots = points.map(p => {
+    const dateFmt = new Date(p.ts).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+    return `<circle cx="${x(p.ts).toFixed(1)}" cy="${y(p.poids).toFixed(1)}" r="3.5" fill="var(--accent)"><title>${dateFmt} — ${p.poids} kg × ${p.reps} reps</title></circle>`;
+  }).join('');
+
+  const yLabels = `
+    <text x="4" y="${y(maxP).toFixed(1)}" fill="var(--muted)" font-size="10">${maxP.toFixed(1)} kg</text>
+    <text x="4" y="${y(minP).toFixed(1)}" fill="var(--muted)" font-size="10">${minP.toFixed(1)} kg</text>
+  `;
+
+  container.innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+      <line x1="${PAD}" y1="${PAD}" x2="${PAD}" y2="${H-PAD}" stroke="var(--line)" stroke-width="1"/>
+      <line x1="${PAD}" y1="${H-PAD}" x2="${W-PAD}" y2="${H-PAD}" stroke="var(--line)" stroke-width="1"/>
+      ${yLabels}
+      <path d="${linePath}" fill="none" stroke="var(--accent)" stroke-width="2"/>
+      ${dots}
+    </svg>
+  `;
+}
+
+// ═══ POIDS ═══
+const KEY_POIDS = "muscu_poids";
+const KEY_OBJECTIF = "muscu_objectif";
+let poidsLogs = [];
+
+function loadPoids() {
+  try {
+    const raw = localStorage.getItem(KEY_POIDS);
+    poidsLogs = raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    poidsLogs = [];
+  }
+}
+
+function savePoidsToStorage() {
+  try {
+    localStorage.setItem(KEY_POIDS, JSON.stringify(poidsLogs));
+  } catch (e) {
+    console.error("Erreur sauvegarde poids", e);
+  }
+}
+
+function getObjectif() {
+  const v = localStorage.getItem(KEY_OBJECTIF);
+  return v ? parseFloat(v) : 80; // défaut : -10kg depuis 90kg
+}
+
+function setObjectif(v) {
+  localStorage.setItem(KEY_OBJECTIF, v);
+}
+
+function addPoidsEntry() {
+  const dateInput = document.getElementById('poidsDate');
+  const valInput = document.getElementById('poidsValeur');
+  const date = dateInput.value;
+  const val = parseFloat(valInput.value);
+
+  if (!date || !val) {
+    alert("Renseigne une date et un poids.");
+    return;
+  }
+
+  poidsLogs.push({
+    id: `${Date.now()}_${Math.random().toString(36).slice(2,7)}`,
+    date: date,
+    poids: val,
+    ts: new Date(date).getTime()
+  });
+  savePoidsToStorage();
+  valInput.value = '';
+  renderPoids();
+}
+
+function deletePoidsEntry(id) {
+  if (!confirm("Supprimer cette pesée ?")) return;
+  poidsLogs = poidsLogs.filter(l => l.id !== id);
+  savePoidsToStorage();
+  renderPoids();
+}
+
+function movingAverage(data, windowSize) {
+  return data.map((point, idx) => {
+    const start = Math.max(0, idx - windowSize + 1);
+    const slice = data.slice(start, idx + 1);
+    const avg = slice.reduce((sum, p) => sum + p.poids, 0) / slice.length;
+    return { ts: point.ts, poids: avg };
+  });
+}
+
+function renderChart(sorted) {
+  const container = document.getElementById('chartContainer');
+  if (sorted.length < 2) {
+    container.innerHTML = '<div class="empty-state">Ajoute au moins 2 pesées pour voir la courbe.</div>';
+    return;
+  }
+
+  const W = 640, H = 220, PAD = 30;
+  const poidsVals = sorted.map(p => p.poids);
+  const minP = Math.min(...poidsVals) - 1;
+  const maxP = Math.max(...poidsVals) + 1;
+  const minTs = sorted[0].ts;
+  const maxTs = sorted[sorted.length - 1].ts;
+  const tsRange = maxTs - minTs || 1;
+
+  function x(ts) { return PAD + ((ts - minTs) / tsRange) * (W - PAD * 2); }
+  function y(poids) { return H - PAD - ((poids - minP) / (maxP - minP)) * (H - PAD * 2); }
+
+  const avg7 = movingAverage(sorted, 7);
+
+  const rawPath = sorted.map((p, i) => `${i === 0 ? 'M' : 'L'} ${x(p.ts).toFixed(1)} ${y(p.poids).toFixed(1)}`).join(' ');
+  const avgPath = avg7.map((p, i) => `${i === 0 ? 'M' : 'L'} ${x(p.ts).toFixed(1)} ${y(p.poids).toFixed(1)}`).join(' ');
+
+  const dots = sorted.map(p => `<circle cx="${x(p.ts).toFixed(1)}" cy="${y(p.poids).toFixed(1)}" r="2.5" fill="var(--accent)" />`).join('');
+
+  // Y axis labels (min/max)
+  const yLabels = `
+    <text x="4" y="${y(maxP).toFixed(1)}" fill="var(--muted)" font-size="10">${maxP.toFixed(1)}</text>
+    <text x="4" y="${y(minP).toFixed(1)}" fill="var(--muted)" font-size="10">${minP.toFixed(1)}</text>
+  `;
+
+  container.innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+      <line x1="${PAD}" y1="${PAD}" x2="${PAD}" y2="${H-PAD}" stroke="var(--line)" stroke-width="1"/>
+      <line x1="${PAD}" y1="${H-PAD}" x2="${W-PAD}" y2="${H-PAD}" stroke="var(--line)" stroke-width="1"/>
+      ${yLabels}
+      <path d="${avgPath}" fill="none" stroke="var(--good)" stroke-width="2" opacity="0.85"/>
+      <path d="${rawPath}" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="0.55"/>
+      ${dots}
+    </svg>
+  `;
+}
+
+function renderPoidsHistory(sorted) {
+  const el = document.getElementById('poidsHistContent');
+  if (sorted.length === 0) {
+    el.innerHTML = '<div class="empty-state">Aucune pesée enregistrée. Ajoute ta première ci-dessus.</div>';
+    return;
+  }
+  const reversed = [...sorted].reverse();
+  let rows = '';
+  reversed.forEach((p, i) => {
+    const older = reversed[i + 1];
+    let arrow = '';
+    if (older) {
+      if (p.poids < older.poids) arrow = '<span class="prog-up">▼</span>';
+      else if (p.poids > older.poids) arrow = '<span class="prog-down">▲</span>';
+    }
+    const dateFmt = new Date(p.date + 'T00:00:00').toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    rows += `<tr>
+      <td>${dateFmt}</td>
+      <td>${p.poids} kg ${arrow}</td>
+      <td><button class="del-btn" data-id="${p.id}">Suppr.</button></td>
+    </tr>`;
+  });
+  el.innerHTML = `
+    <table class="hist">
+      <thead><tr><th>Date</th><th>Poids</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+  el.querySelectorAll('.del-btn').forEach(btn => {
+    btn.addEventListener('click', () => deletePoidsEntry(btn.dataset.id));
+  });
+}
+
+function renderPoids() {
+  const objInput = document.getElementById('objectifInput');
+  if (document.activeElement !== objInput) {
+    objInput.value = getObjectif();
+  }
+
+  const sorted = [...poidsLogs].sort((a, b) => a.ts - b.ts);
+
+  const depart = sorted.length ? sorted[0].poids : null;
+  const actuel = sorted.length ? sorted[sorted.length - 1].poids : null;
+  const objectif = getObjectif();
+
+  document.getElementById('poidsDepart').textContent = depart !== null ? `${depart} kg` : '—';
+  document.getElementById('poidsActuel').textContent = actuel !== null ? `${actuel} kg` : '—';
+  document.getElementById('poidsRestant').textContent = actuel !== null ? `${Math.max(0, (actuel - objectif)).toFixed(1)} kg` : '—';
+
+  if (!document.getElementById('poidsDate').value) {
+    document.getElementById('poidsDate').value = new Date().toISOString().slice(0, 10);
+  }
+
+  renderChart(sorted);
+  renderPoidsHistory(sorted);
+}
+
+// ═══ EXPORT / IMPORT ═══
+function exportData() {
+  const payload = {
+    app: "Forge",
+    exportedAt: new Date().toISOString(),
+    logs: allLogs,
+    poids: poidsLogs,
+    objectif: getObjectif(),
+    program: PROGRAM,
+    customCatalog: customCatalog,
+    restDefault: restDefault
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `forge_sauvegarde_${dateStr}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  const msg = document.getElementById('backupMsg');
+  msg.style.color = "var(--good)";
+  msg.textContent = "Fichier téléchargé.";
+}
+
+function importData(file) {
+  const msg = document.getElementById('backupMsg');
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    let data;
+    try {
+      data = JSON.parse(e.target.result);
+    } catch (err) {
+      msg.style.color = "var(--danger)";
+      msg.textContent = "Fichier invalide, impossible de le lire.";
+      return;
+    }
+
+    if (!data || typeof data !== 'object' || (!data.logs && !data.poids && !data.program)) {
+      msg.style.color = "var(--danger)";
+      msg.textContent = "Ce fichier ne ressemble pas à une sauvegarde Forge.";
+      return;
+    }
+
+    if (!confirm("Importer cette sauvegarde va remplacer toutes les données actuelles sur cet appareil (séances, pesées, programme). Continuer ?")) {
+      return;
+    }
+
+    if (Array.isArray(data.logs)) {
+      allLogs = data.logs;
+      saveLogsToStorage();
+    }
+    if (Array.isArray(data.poids)) {
+      poidsLogs = data.poids;
+      savePoidsToStorage();
+    }
+    if (typeof data.objectif === 'number') {
+      setObjectif(data.objectif);
+    }
+    if (data.program && typeof data.program === 'object') {
+      PROGRAM = data.program;
+      DAYS = Object.keys(PROGRAM);
+      if (!DAYS.includes(currentDay)) currentDay = DAYS[0];
+      saveProgram();
+    }
+    if (data.customCatalog && typeof data.customCatalog === 'object') {
+      customCatalog = data.customCatalog;
+      saveCustomCatalog();
+    }
+    if (typeof data.restDefault === 'number') {
+      restDefault = data.restDefault;
+      saveRestDefault();
+      if (!restRunning) restRemaining = restDefault;
+      document.getElementById('restDefaultInput').value = restDefault;
+      renderRestTimer();
+    }
+
+    renderDaySelect();
+    renderExoList();
+    renderHistory();
+    renderPoids();
+
+    msg.style.color = "var(--good)";
+    msg.textContent = "Sauvegarde importée avec succès.";
+  };
+  reader.readAsText(file);
+}
+
+// ═══ REST TIMER ═══
+const KEY_REST_DEFAULT = "forge_rest_default";
+let restDefault = 60;
+let restRemaining = 60;
+let restInterval = null;
+let restRunning = false;
+
+function loadRestDefault() {
+  const v = localStorage.getItem(KEY_REST_DEFAULT);
+  restDefault = v ? parseInt(v) : 60;
+  restRemaining = restDefault;
+}
+
+function saveRestDefault() {
+  localStorage.setItem(KEY_REST_DEFAULT, String(restDefault));
+}
+
+function formatRest(seconds) {
+  const s = Math.max(0, seconds);
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+}
+
+function renderRestTimer() {
+  const display = document.getElementById('restDisplay');
+  const toggle = document.getElementById('restToggle');
+  const timer = document.getElementById('restTimer');
+  if (!display) return;
+  display.textContent = formatRest(restRemaining);
+  toggle.textContent = restRunning ? '⏸ Pause' : '▶ Démarrer';
+  toggle.classList.toggle('is-running', restRunning);
+  timer.classList.toggle('is-running', restRunning);
+}
+
+function restBeep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.value = 880;
+    gain.gain.setValueAtTime(0.25, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.5);
+  } catch (e) { /* audio non disponible, on ignore */ }
+  if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+}
+
+function restTick() {
+  restRemaining -= 1;
+  if (restRemaining <= 0) {
+    restRemaining = 0;
+    clearInterval(restInterval);
+    restInterval = null;
+    restRunning = false;
+    renderRestTimer();
+    const timer = document.getElementById('restTimer');
+    timer.classList.add('is-done');
+    restBeep();
+    setTimeout(() => {
+      timer.classList.remove('is-done');
+      restRemaining = restDefault;
+      renderRestTimer();
+    }, 2000);
+    return;
+  }
+  renderRestTimer();
+}
+
+function toggleRest() {
+  if (restRunning) {
+    clearInterval(restInterval);
+    restInterval = null;
+    restRunning = false;
+  } else {
+    if (restRemaining <= 0) restRemaining = restDefault;
+    restRunning = true;
+    restInterval = setInterval(restTick, 1000);
+  }
+  renderRestTimer();
+}
+
+function resetRest() {
+  clearInterval(restInterval);
+  restInterval = null;
+  restRunning = false;
+  restRemaining = restDefault;
+  document.getElementById('restTimer').classList.remove('is-done');
+  renderRestTimer();
+}
+
+function adjustRest(delta) {
+  restRemaining = Math.max(0, restRemaining + delta);
+  renderRestTimer();
+}
+
+function initApp() {
+  const headerDate = document.getElementById('headerDate');
+  if (headerDate) {
+    const today = new Date();
+    headerDate.textContent = today.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  }
+  loadProgram();
+  currentDay = DAYS[0];
+  loadLogs();
+  loadPoids();
+  loadCustomCatalog();
+  loadRestDefault();
+  renderDaySelect();
+  renderExoList();
+
+  const restDefaultInput = document.getElementById('restDefaultInput');
+  restDefaultInput.value = restDefault;
+  renderRestTimer();
+  document.getElementById('restToggle').addEventListener('click', toggleRest);
+  document.getElementById('restReset').addEventListener('click', resetRest);
+  document.getElementById('restMinus').addEventListener('click', () => adjustRest(-15));
+  document.getElementById('restPlus').addEventListener('click', () => adjustRest(15));
+  restDefaultInput.addEventListener('change', (e) => {
+    const v = Math.max(5, parseInt(e.target.value) || 60);
+    restDefault = v;
+    saveRestDefault();
+    if (!restRunning) {
+      restRemaining = restDefault;
+      renderRestTimer();
+    }
+  });
+
+  document.getElementById('exportBtn').addEventListener('click', exportData);
+  document.getElementById('importFile').addEventListener('change', (e) => {
+    importData(e.target.files[0]);
+    e.target.value = '';
+  });
+  document.querySelectorAll('nav.tabs button').forEach(b => {
+    b.addEventListener('click', () => switchTab(b.dataset.tab));
+  });
+  document.getElementById('saveBtn').addEventListener('click', finishSession);
+  document.getElementById('filterDay').addEventListener('change', renderHistory);
+  document.getElementById('filterExo').addEventListener('change', renderHistory);
+  document.getElementById('poidsSaveBtn').addEventListener('click', addPoidsEntry);
+  document.getElementById('objectifInput').addEventListener('change', (e) => {
+    setObjectif(e.target.value);
+    const savedEl = document.getElementById('objectifSaved');
+    savedEl.textContent = "Enregistré ✓";
+    setTimeout(() => savedEl.textContent = '', 1500);
+    renderPoids();
+  });
+}
+</script>
+</body>
+</html>
