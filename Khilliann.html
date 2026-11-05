@@ -323,6 +323,21 @@
   .install-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; margin-top: 16px; }
   .install-card .backup-title { margin-bottom: 6px; }
   .install-btn { margin-top: 10px; background: var(--accent); color: #051217; border: none; padding: 10px 16px; border-radius: var(--radius-sm); font-family: var(--font-display); font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; cursor: pointer; display: none; }
+  .edit-machine-btn { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 8px; text-align: left; background: #05080d; border: 1px solid var(--accent2-dim); color: var(--text); padding: 11px 12px; border-radius: var(--radius-sm); font-size: 14px; font-family: var(--font-body); margin-bottom: 8px; cursor: pointer; }
+  .edit-machine-btn:hover, .edit-machine-btn:focus { border-color: var(--accent2); outline: none; }
+  .emb-arrow { color: var(--accent2); }
+  #exoPicker { display: none; position: fixed; inset: 0; z-index: 9000; background: rgba(2,4,8,.8); backdrop-filter: blur(3px); align-items: flex-start; justify-content: center; }
+  .pk-sheet { width: 100%; max-width: 560px; height: 100%; max-height: 100dvh; display: flex; flex-direction: column; background: #080c12; border-left: 1px solid var(--accent2-dim); border-right: 1px solid var(--accent2-dim); }
+  .pk-top { display: flex; gap: 8px; padding: 12px; border-bottom: 1px solid var(--accent2-dim); background: #0a0f17; }
+  #exoPickerInput { flex: 1; min-width: 0; background: #05080d; border: 1px solid var(--accent2); color: var(--text); padding: 12px; border-radius: var(--radius-sm); font-size: 16px; font-family: var(--font-body); box-shadow: var(--glow-purple); }
+  #exoPickerInput:focus { outline: none; }
+  #exoPickerClose { background: transparent; border: 1px solid var(--accent2-dim); color: var(--text); width: 44px; border-radius: var(--radius-sm); font-size: 16px; cursor: pointer; }
+  .pk-count { font-size: 11.5px; color: var(--muted); padding: 8px 14px 2px; }
+  .pk-list { flex: 1; overflow-y: auto; padding: 0 8px 24px; -webkit-overflow-scrolling: touch; }
+  .pk-group { position: sticky; top: 0; background: #080c12; color: var(--accent2); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; padding: 10px 6px 4px; }
+  .pk-item { display: block; width: 100%; text-align: left; background: transparent; border: 0; border-bottom: 1px solid rgba(255,255,255,.06); color: var(--text); padding: 12px 8px; font-size: 15px; font-family: var(--font-body); cursor: pointer; }
+  .pk-item.on { color: var(--accent); font-weight: 600; }
+  .pk-item:active { background: rgba(255,255,255,.06); }
   .exo-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; }
   .exo-foot-main { flex: 1; min-width: 0; }
   .row-note-btn {
@@ -1282,27 +1297,133 @@ function esc(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-function machineSelectHtml(idx, currentName) {
-  const inCatalog = allCatalogMachines().includes(currentName);
-  const opt = m => `<option value="${escAttr(m)}" ${m === currentName ? 'selected' : ''}>${esc(m)}</option>`;
-  const builtIn = new Set();
-  let html = '';
+function normSearch(str) {
+  return String(str).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+// Toutes les entrées du catalogue (d'origine + perso) avec leur muscle et leur matériel.
+function catalogEntries() {
+  const out = [];
+  const seen = new Set();
   Object.keys(EXO_CATALOG).forEach(group => {
     Object.keys(EXO_CATALOG[group]).forEach(equip => {
-      html += `<optgroup label="${escAttr(group + ' · ' + equip)}">`;
-      EXO_CATALOG[group][equip].forEach(m => { builtIn.add(m); html += opt(m); });
-      html += `</optgroup>`;
+      EXO_CATALOG[group][equip].forEach(name => { seen.add(name); out.push({ name, group, equip }); });
     });
   });
   Object.keys(customCatalog).forEach(group => {
-    const own = customCatalog[group].filter(m => !builtIn.has(m));
-    if (!own.length) return;
-    html += `<optgroup label="${escAttr(group + ' · Perso')}">`;
-    own.forEach(m => { html += opt(m); });
-    html += `</optgroup>`;
+    customCatalog[group].forEach(name => { if (!seen.has(name)) out.push({ name, group, equip: 'Perso' }); });
+  });
+  return out;
+}
+
+// Recherche : tous les mots tapés doivent se retrouver dans le nom, le muscle ou le matériel (sans tenir compte des accents ni des majuscules).
+function searchCatalog(query) {
+  const tokens = normSearch(query).split(/\s+/).filter(Boolean);
+  const all = catalogEntries();
+  if (!tokens.length) return all;
+  return all.filter(e => {
+    const hay = normSearch(e.name + ' ' + e.group + ' ' + e.equip);
+    return tokens.every(t => hay.includes(t));
+  });
+}
+
+function machineSelectHtml(idx, currentName, query) {
+  const inCatalog = allCatalogMachines().includes(currentName);
+  const opt = m => `<option value="${escAttr(m)}" ${m === currentName ? 'selected' : ''}>${esc(m)}</option>`;
+  const entries = searchCatalog(query || '');
+  const order = [];
+  const byLabel = {};
+  entries.forEach(e => {
+    const label = e.group + ' · ' + e.equip;
+    if (!byLabel[label]) { byLabel[label] = []; order.push(label); }
+    byLabel[label].push(e.name);
+  });
+  let html = '';
+  order.forEach(label => {
+    html += `<optgroup label="${escAttr(label)}">${byLabel[label].map(opt).join('')}</optgroup>`;
   });
   html += `<option value="__custom__" ${!inCatalog ? 'selected' : ''}>Autre / nom personnalisé…</option>`;
   return html;
+}
+
+function refreshMachineBtn(idx) {
+  const sel = document.querySelector(`.edit-machine[data-idx="${idx}"]`);
+  const lab = document.querySelector(`.edit-machine-btn[data-idx="${idx}"] .emb-label`);
+  if (!sel || !lab) return;
+  lab.textContent = sel.value === '__custom__' ? 'Autre / nom personnalisé…' : sel.value;
+}
+
+let pickerIdx = null;
+function openExoPicker(idx) {
+  pickerIdx = idx;
+  const ov = document.getElementById('exoPicker');
+  const inp = document.getElementById('exoPickerInput');
+  inp.value = '';
+  renderExoPicker('');
+  ov.style.display = 'flex';
+  setTimeout(() => inp.focus(), 50);
+}
+function closeExoPicker() {
+  document.getElementById('exoPicker').style.display = 'none';
+  pickerIdx = null;
+}
+function renderExoPicker(query) {
+  const sel = document.querySelector(`.edit-machine[data-idx="${pickerIdx}"]`);
+  const cur = sel ? sel.value : '';
+  const q = (query || '').trim();
+  const entries = searchCatalog(q);
+  const list = document.getElementById('exoPickerList');
+  const count = document.getElementById('exoPickerCount');
+  count.textContent = q ? (entries.length ? `${entries.length} résultat${entries.length > 1 ? 's' : ''}` : 'Aucun résultat') : `${entries.length} exercices`;
+  const order = [], by = {};
+  entries.forEach(e => {
+    const label = e.group + ' · ' + e.equip;
+    if (!by[label]) { by[label] = []; order.push(label); }
+    by[label].push(e.name);
+  });
+  let html = '';
+  order.forEach(label => {
+    html += `<div class="pk-group">${esc(label)}</div>` + by[label].map(n =>
+      `<button type="button" class="pk-item ${n === cur ? 'on' : ''}" data-name="${escAttr(n)}">${esc(n)}</button>`).join('');
+  });
+  html += `<div class="pk-group">Autre</div><button type="button" class="pk-item pk-custom ${cur === '__custom__' ? 'on' : ''}" data-custom="1">${q && !entries.length ? 'Ajouter « ' + esc(q) + ' »' : 'Autre / nom personnalisé…'}</button>`;
+  list.innerHTML = html;
+  list.scrollTop = 0;
+}
+function pickExo(name, custom) {
+  const idx = pickerIdx;
+  const sel = document.querySelector(`.edit-machine[data-idx="${idx}"]`);
+  const q = document.getElementById('exoPickerInput').value.trim();
+  sel.value = custom ? '__custom__' : name;
+  refreshMachineBtn(idx);
+  onMachineSelectChange(idx);
+  if (custom && q && !searchCatalog(q).length) {
+    const c = document.querySelector(`.edit-name-custom[data-idx="${idx}"]`);
+    if (c && !c.value.trim()) c.value = q.charAt(0).toUpperCase() + q.slice(1);
+  }
+  closeExoPicker();
+}
+function setupExoPicker() {
+  if (document.getElementById('exoPicker')) return;
+  const d = document.createElement('div');
+  d.id = 'exoPicker';
+  d.innerHTML = `<div class="pk-sheet">
+    <div class="pk-top">
+      <input type="search" id="exoPickerInput" placeholder="Rechercher (ex : curl, poulie, jambes…)" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Rechercher un exercice">
+      <button type="button" id="exoPickerClose" aria-label="Fermer">✕</button>
+    </div>
+    <div class="pk-count" id="exoPickerCount"></div>
+    <div class="pk-list" id="exoPickerList"></div>
+  </div>`;
+  document.body.appendChild(d);
+  d.addEventListener('click', e => { if (e.target === d) closeExoPicker(); });
+  document.getElementById('exoPickerClose').addEventListener('click', closeExoPicker);
+  document.getElementById('exoPickerInput').addEventListener('input', e => renderExoPicker(e.target.value));
+  document.getElementById('exoPickerList').addEventListener('click', e => {
+    const b = e.target.closest('.pk-item'); if (!b) return;
+    pickExo(b.dataset.name, !!b.dataset.custom);
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && pickerIdx !== null) closeExoPicker(); });
 }
 
 function onMachineSelectChange(idx) {
@@ -1344,7 +1465,8 @@ function renderExoList() {
       const effectiveMuscle = (groupForName && MUSCLE_OPTIONS.includes(groupForName)) ? groupForName : exo.muscle;
       card.innerHTML = `
         <div class="edit-fields">
-          <select class="edit-machine" data-idx="${idx}">${machineSelectHtml(idx, exo.name)}</select>
+          <button type="button" class="edit-machine-btn" data-idx="${idx}"><span class="emb-label"></span><span class="emb-arrow">▾</span></button>
+          <select class="edit-machine" data-idx="${idx}" style="display:none">${machineSelectHtml(idx, exo.name)}</select>
           <div class="edit-name-custom-wrap" data-idx="${idx}" style="display:${inCatalog ? 'none' : 'block'};">
             <input type="text" class="edit-name-custom" data-idx="${idx}" value="${inCatalog ? '' : exo.name.replace(/"/g, '&quot;')}" placeholder="Nom de la machine (si absente du catalogue)">
             <label class="custom-save-label">
@@ -1422,6 +1544,10 @@ function renderExoList() {
     });
     el.querySelectorAll('.edit-machine').forEach(sel => {
       sel.addEventListener('change', () => onMachineSelectChange(sel.dataset.idx));
+    });
+    el.querySelectorAll('.edit-machine-btn').forEach(btn => {
+      refreshMachineBtn(btn.dataset.idx);
+      btn.addEventListener('click', () => openExoPicker(btn.dataset.idx));
     });
     return;
   }
@@ -1993,7 +2119,7 @@ const TUTO_STEPS = [
   {
     visual: '<span class="tv-field" style="width:auto;padding:0 12px;font-style:normal">⬇ Exporter</span><span class="tv-field" style="width:auto;padding:0 12px;font-style:normal">Installer</span>',
     title: "À faire une fois",
-    text: "<ul><li><b>Sauvegarde</b> : en bas de page, exporte un fichier de secours de temps en temps. Si tu changes de téléphone ou vides les données du navigateur, c'est lui qui te sauve.</li><li><b>Installer l'appli</b> : menu ⋮ du navigateur → « Installer l'application ». Elle s'ouvre en plein écran, même sans réseau.</li></ul>"
+    text: "<ul><li><b>Sauvegarde</b> : en bas de page, exporte un fichier de secours de temps en temps. Si tu changes de téléphone ou vides les données du navigateur, c'est lui qui te sauve.</li><li><b>Installer l'appli</b> : sur Android, menu ⋮ → « Installer l'application » ; sur iPhone, dans Safari, bouton Partager → « Sur l'écran d'accueil ». Elle s'ouvre en plein écran, même sans réseau.</li></ul>"
   }
 ];
 let tutoIdx = 0;
@@ -2025,6 +2151,7 @@ function closeTuto() {
   document.getElementById('tuto').style.display = 'none';
 }
 function setupTuto() {
+  setupExoPicker();
   document.getElementById('tutoNext').addEventListener('click', () => {
     if (tutoIdx >= TUTO_STEPS.length - 1) { closeTuto(); return; }
     tutoIdx++; renderTuto();
@@ -2059,6 +2186,10 @@ if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
 
 function initApp() {
   setupTuto();
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (isIOS) {
+    document.getElementById('installSub').innerHTML = "Sur iPhone : ouvre cette page dans <b>Safari</b>, touche le bouton <b>Partager</b> (le carré avec une flèche vers le haut), puis <b>« Sur l'écran d'accueil »</b>. L'appli s'ouvre ensuite en plein écran, même sans réseau. Attention : l'appli installée a ses <b>propres données</b>, séparées de celles de Safari. Si tu as déjà des séances dans Safari, exporte-les d'abord (« Exporter mes données »), puis importe le fichier dans l'appli installée.";
+  }
   const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
   if (standalone) document.getElementById('installCard').style.display = 'none';
   document.getElementById('installBtn').addEventListener('click', async () => {

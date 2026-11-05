@@ -5,6 +5,8 @@ Un seul fichier (`Khilliann.html`), sans serveur, sans compte : les données res
 
 Adresse : `https://thomaslecussan-bit.github.io/Musculation/Khilliann.html`
 
+- **Recherche d'exercice** : en mode Modifier, touche le nom de l'exercice → fenêtre avec barre de recherche en haut (accents ignorés, filtre aussi par muscle ou matériel).
+
 ## Fonctionnalités (V3)
 
 - Code à 4 chiffres choisi à la première ouverture (stocké sur l'appareil)
