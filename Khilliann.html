@@ -507,7 +507,7 @@
 </head>
 <body>
 
-<div id="gate">
+<div id="gate" style="display:none">
   <div class="gate-title"><span class="glitch" data-text="FORGE">FORGE</span></div>
   <div class="gate-test" id="gateTest" style="display:none;">MODE TEST</div>
   <div class="gate-sub" id="gateSub">Choisis ton code à 4 chiffres pour protéger tes données.</div>
@@ -779,14 +779,15 @@ document.querySelectorAll('.gate-key[data-k]').forEach(btn => {
 });
 document.getElementById('gateDel').addEventListener('click', gateDelete);
 document.getElementById('gateReset').addEventListener('click', gateReset);
-gateStart();
+// Plus de code : l'appli s'ouvre directement.
+setTimeout(unlockApp, 0);
 if (IS_TEST) {
   document.getElementById('gateTest').style.display = 'block';
   document.title = 'Forge (TEST)';
 }
 
 function testCopyReal() {
-  if (!confirm("Copier tes vraies données (séances, poids, programme, code) dans l'espace de test ? Ça remplace ce qu'il y a déjà dans le test. Tes vraies données ne sont pas modifiées.")) return;
+  if (!confirm("Copier tes vraies données (séances, poids, programme) dans l'espace de test ? Ça remplace ce qu'il y a déjà dans le test. Tes vraies données ne sont pas modifiées.")) return;
   BASE_KEYS.forEach(k => {
     const v = localStorage.getItem(k);
     if (v !== null) localStorage.setItem('test_' + k, v);
@@ -2094,7 +2095,7 @@ const TUTO_STEPS = [
   {
     visual: '<span class="tv-big">FORGE</span><span class="version-badge" style="animation:none;top:0">V3</span>',
     title: "Bienvenue",
-    text: "<p>Forge est ton carnet de musculation : tu notes tes séries sur la machine, et il te montre ta progression.</p><ul><li>Tes données restent <b>sur ton téléphone</b> (pas de compte, pas de serveur).</li><li>Ton code à 4 chiffres protège l'accès.</li><li>Ce tutoriel dure 30 secondes.</li></ul>"
+    text: "<p>Forge est ton carnet de musculation : tu notes tes séries sur la machine, et il te montre ta progression.</p><ul><li>Tes données restent <b>sur ton téléphone</b> (pas de compte, pas de serveur).</li><li>Pas de code à taper : l'appli s'ouvre directement.</li><li>Ce tutoriel dure 30 secondes.</li></ul>"
   },
   {
     visual: [1,2,3,4,5,6,7,8].map((n,i)=>`<span class="tv-num" style="--neon:${i%2?'#d43fd6':'#4de0e8'};--neon-rgb:${i%2?'212,63,214':'77,224,232'}">${n}</span>`).join(''),

@@ -9,7 +9,7 @@ Adresse : `https://thomaslecussan-bit.github.io/Musculation/Khilliann.html`
 
 ## Fonctionnalités (V3)
 
-- Code à 4 chiffres choisi à la première ouverture (stocké sur l'appareil)
+- Pas de code : l'appli s'ouvre directement
 - **8 séances** (chiffres néon 1 à 8 : Haut A, Bas A, Haut B, Bas B, Haut C, Bas C, Haut D, Bas D)
 - Catalogue de **168 exercices** : machines Technogym, haltères, barre, poulies, classés par muscle
 - Saisie **poids / séries / reps**, pré-remplie avec la dernière séance, enregistrement ligne par ligne (✓)
