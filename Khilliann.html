@@ -446,6 +446,71 @@
     cursor: pointer; font-family: inherit;
   }
 
+  /* Muscles tab */
+  .mus-modes { display: flex; gap: 6px; margin-bottom: 16px; }
+  .mus-modes button { flex: 1; background: var(--panel); border: 1px solid var(--line); color: var(--muted); padding: 9px 4px; border-radius: 999px; font-size: 13px; font-family: var(--font-body); cursor: pointer; }
+  .mus-modes button.active { color: var(--accent); border-color: var(--accent); box-shadow: 0 0 12px rgba(77,224,232,.25); }
+  .mus-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 18px; overflow: hidden; }
+  .mus-map { background: radial-gradient(ellipse at 50% 40%, #121a26 0%, #0a0f17 75%); padding: 10px 6px 6px; position: relative; }
+  .mus-map svg { width: 100%; height: auto; display: block; max-height: 380px; }
+  .mus-legend { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; padding: 2px 10px 8px; color: var(--text); }
+  .mus-legend i { display: inline-block; width: 54px; height: 8px; border-radius: 999px; background: linear-gradient(90deg, #ffbe85, #ff4d00); }
+  .mus-body { padding: 14px 16px 16px; }
+  .mus-title { font-family: var(--font-display); font-size: 24px; font-weight: 700; }
+  .mus-date { font-size: 12.5px; color: var(--muted); margin: 2px 0 12px; }
+  .mus-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 8px; text-align: center; margin-bottom: 12px; }
+  .mus-stats .l { font-size: 11.5px; color: var(--muted); }
+  .mus-stats .n { font-family: var(--font-display); font-size: 21px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .mus-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .mus-chip { font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(255,120,40,.45); background: rgba(255,100,20,.1); color: #ffc9a3; }
+  .mus-empty { text-align: center; color: var(--muted); padding: 40px 10px; font-size: 14px; }
+  .st-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .st-kpi { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; }
+  .st-kpi.big { grid-column: 1 / -1; border-color: rgba(255,120,40,.5); background: linear-gradient(135deg, rgba(255,100,20,.12), var(--panel)); }
+  .st-kpi .n { font-family: var(--font-display); font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .st-kpi.big .n { font-size: 34px; }
+  .st-kpi .l { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+  .st-delta { display: inline-block; font-size: 11.5px; margin-top: 4px; }
+  .st-delta.up { color: var(--good); } .st-delta.down { color: #ff7a7a; }
+  .st-sec { font-family: var(--font-display); font-size: 15px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin: 22px 0 10px; }
+  .st-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 14px; }
+  .st-row { display: grid; grid-template-columns: 92px 1fr auto; gap: 10px; align-items: center; margin: 8px 0; font-size: 13px; }
+  .st-track { height: 10px; background: #0b1119; border-radius: 999px; overflow: hidden; }
+  .st-fill { height: 100%; border-radius: 999px; }
+  .st-val { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12px; text-align: right; min-width: 74px; }
+  .st-impr { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.06); font-size: 13.5px; }
+  .st-impr:last-child { border-bottom: 0; }
+  .st-impr .nm { flex: 1; min-width: 0; }
+  .st-impr .tag { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+  .st-impr .tag.up { color: var(--good); } .st-impr .tag.flat { color: #ffb36b; }
+  .st-impr .sub { display: block; font-size: 11.5px; color: var(--muted); }
+  .st-hint { font-size: 12px; color: var(--muted); margin: 6px 0 0; }
+  /* Séance en cours */
+  .sess-bar { margin-bottom: 14px; }
+  .sess-live, .sess-done, .sess-hint { display: flex; align-items: center; gap: 10px; border-radius: var(--radius); padding: 10px 12px; font-size: 13px; }
+  .sess-live { background: linear-gradient(90deg, rgba(77,224,232,.14), rgba(212,63,214,.14)); border: 1px solid var(--accent-dim); box-shadow: var(--glow-cyan); }
+  .sess-live .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--danger); box-shadow: 0 0 10px var(--danger); animation: sessPulse 1.4s infinite; flex: none; }
+  @keyframes sessPulse { 50% { opacity: .35; } }
+  .sess-live .tt { flex: 1; min-width: 0; }
+  .sess-live .tm { font-family: var(--font-display); font-size: 20px; letter-spacing: .04em; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .sess-live button { background: transparent; border: 1px solid var(--accent); color: var(--accent); border-radius: 999px; padding: 7px 12px; font-size: 12px; cursor: pointer; font-family: var(--font-body); }
+  .sess-done { background: rgba(62,232,154,.08); border: 1px solid rgba(62,232,154,.35); color: var(--good); }
+  .sess-hint { color: var(--muted); font-size: 12px; padding: 4px 2px; }
+  /* Statistiques (look moderne aux couleurs de l'appli) */
+  .mus-map { background: radial-gradient(ellipse at 50% 35%, rgba(77,224,232,.10), transparent 60%), radial-gradient(ellipse at 50% 100%, rgba(212,63,214,.12), transparent 60%), linear-gradient(rgba(77,224,232,.05) 1px, transparent 1px) 0 0 / 100% 22px, #090e16 !important; }
+  .mus-legend i { background: linear-gradient(90deg, #4de0e8, #9a6bff, #d43fd6) !important; }
+  .mus-chip { border-color: rgba(77,224,232,.4) !important; background: rgba(77,224,232,.08) !important; color: #bdf3f6 !important; }
+  .st-kpi.big { border-color: var(--accent-dim) !important; background: linear-gradient(135deg, rgba(77,224,232,.14), rgba(212,63,214,.12)) !important; box-shadow: var(--glow-cyan); }
+  .st-kpi.big .n { background: linear-gradient(90deg, #4de0e8, #d43fd6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .st-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+  .st-nav button { width: 40px; height: 40px; border-radius: 50%; background: var(--panel); border: 1px solid var(--line); color: var(--accent); font-size: 18px; cursor: pointer; }
+  .st-nav button:disabled { opacity: .3; cursor: default; }
+  .st-nav-title { text-align: center; font-family: var(--font-display); font-size: 20px; }
+  .st-nav-title span { display: block; font-family: var(--font-body); font-size: 12px; color: var(--muted); }
+  .st-metrics { display: flex; gap: 6px; margin-bottom: 8px; }
+  .st-metrics button { flex: 1; background: transparent; border: 1px solid var(--line); color: var(--muted); border-radius: 999px; padding: 7px 4px; font-size: 12px; cursor: pointer; font-family: var(--font-body); }
+  .st-metrics button.active { color: #fff; border-color: transparent; background: linear-gradient(90deg, rgba(77,224,232,.35), rgba(212,63,214,.35)); }
+  .st-chart svg { width: 100%; height: auto; display: block; touch-action: manipulation; }
   /* Poids tab */
   .poids-stats { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
   .poids-stat { flex: 1; min-width: 120px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; }
@@ -547,7 +612,7 @@
   <header>
     <div class="logotype-row">
       <div class="logotype"><span class="glitch" data-text="Forge">Forge</span></div>
-      <span class="version-badge">V3</span>
+      <span class="version-badge">V4</span>
     </div>
     <div class="header-date" id="headerDate"></div>
   </header>
@@ -571,10 +636,11 @@
   <nav class="tabs">
     <button class="active" data-tab="seance">Séance du jour</button>
     <button data-tab="historique">Historique</button>
-    <button data-tab="poids">Poids</button>
+    <button data-tab="muscles">Statistiques</button>
   </nav>
 
   <div id="tab-seance">
+    <div class="sess-bar" id="sessionBar"></div>
     <div class="day-select" id="daySelect"></div>
     <div id="exoList"></div>
     <div class="save-bar">
@@ -604,6 +670,16 @@
       </div>
     </div>
     <div id="histContent"></div>
+  </div>
+
+  <div id="tab-muscles" style="display:none;">
+    <div class="mus-modes" id="musModes">
+      <button data-mode="jour">Jour</button>
+      <button data-mode="semaine" class="active">Semaine</button>
+      <button data-mode="mois">Mois</button>
+      <button data-mode="seances">Séances</button>
+    </div>
+    <div id="musContent"></div>
   </div>
 
   <div id="tab-poids" style="display:none;">
@@ -677,7 +753,7 @@
 // (préfixe "test_"), tes vraies données ne sont jamais lues ni modifiées.
 const IS_TEST = /[?&]test(=|&|$)/.test(location.search);
 const NS = IS_TEST ? "test_" : "";
-const BASE_KEYS = ["forge_pin", "forge_program", "forge_custom_catalog", "muscu_logs", "muscu_poids", "muscu_objectif", "forge_rest_default", "forge_days8", "forge_tuto_off"];
+const BASE_KEYS = ["forge_pin", "forge_program", "forge_custom_catalog", "muscu_logs", "muscu_poids", "muscu_objectif", "forge_rest_default", "forge_days8", "forge_tuto_off", "forge_sessions"];
 
 // ═══ PIN GATE ═══
 const KEY_PIN = NS + "forge_pin";
@@ -1209,6 +1285,7 @@ function saveRow(idx) {
   allLogs.push(entry);
   if (noteInput) { noteInput.value = ''; noteInput.style.display = 'none'; refreshNoteBtn(idx); document.querySelector(`.row-note-btn[data-idx="${idx}"]`).classList.remove('is-open'); }
   saveLogsToStorage();
+  touchSession(currentDay, entry.ts);
   savedThisSession[idx] = true;
 
   btn.classList.add('is-saved');
@@ -1445,6 +1522,7 @@ function onMachineSelectChange(idx) {
 function renderExoList() {
   const el = document.getElementById('exoList');
   el.innerHTML = '';
+  renderSessionBar();
 
   if (!PROGRAM[currentDay].length) {
     const empty = document.createElement('div');
@@ -1564,25 +1642,402 @@ function renderExoList() {
   });
 }
 
+// ═══ SÉANCES (départ à la 1re série, clôture au bouton « Terminer ») ═══
+const KEY_SESSIONS = NS + "forge_sessions";
+function loadSessions() { try { return JSON.parse(localStorage.getItem(KEY_SESSIONS) || '[]'); } catch (e) { return []; } }
+function saveSessions(a) { try { localStorage.setItem(KEY_SESSIONS, JSON.stringify(a)); } catch (e) {} }
+function findSession(a, date, day) { return a.find(x => x.date === date && x.day === day); }
+
+// Appelé à chaque série validée : la 1re de la séance lance le chrono.
+function touchSession(day, ts) {
+  const a = loadSessions();
+  const s = findSession(a, todayStr(), day);
+  if (!s) a.push({ id: String(ts), date: todayStr(), day, start: ts, end: null });
+  else if (s.end) s.end = null;   // nouvelle série après clôture : on rouvre la séance
+  saveSessions(a);
+  renderSessionBar();
+}
+
+function renderSessionBar() {
+  const el = document.getElementById('sessionBar');
+  if (!el) return;
+  const s = findSession(loadSessions(), todayStr(), currentDay);
+  if (!s) {
+    el.innerHTML = '<div class="sess-hint">Le chrono démarre à la première série validée.</div>';
+  } else if (!s.end) {
+    el.innerHTML = `<div class="sess-live"><span class="dot"></span><div class="tt">Séance en cours · ${esc(currentDay)}<div class="tm" id="sessTime">${fmtClock(Date.now() - s.start)}</div></div><button type="button" id="sessFinishBtn">Terminer</button></div>`;
+    document.getElementById('sessFinishBtn').addEventListener('click', finishSession);
+  } else {
+    const ent = allLogs.filter(l => l.date === s.date && l.day === s.day);
+    el.innerHTML = `<div class="sess-done">✓ Séance terminée · ${fmtDuration(s.end - s.start)} · ${fmtNum(ent.reduce((x, l) => x + entryVol(l), 0))} kg</div>`;
+  }
+}
+function fmtClock(ms) {
+  const t = Math.max(0, Math.floor(ms / 1000)), h = Math.floor(t / 3600), m = Math.floor(t % 3600 / 60), sec = t % 60;
+  return (h ? h + ':' : '') + String(m).padStart(h ? 2 : 1, '0') + ':' + String(sec).padStart(2, '0');
+}
+setInterval(() => {
+  const t = document.getElementById('sessTime');
+  if (!t) return;
+  const s = findSession(loadSessions(), todayStr(), currentDay);
+  if (s && !s.end) t.textContent = fmtClock(Date.now() - s.start);
+}, 1000);
+
 function finishSession() {
   const toast = document.getElementById('toast');
-  const count = Object.keys(savedThisSession).length;
-  if (count === 0) {
+  const a = loadSessions();
+  const s = findSession(a, todayStr(), currentDay);
+  if (!s) {
     toast.style.color = "var(--danger)";
     toast.textContent = "Aucune ligne enregistrée pour cette séance pour le moment.";
     return;
   }
+  if (s.end) {
+    toast.style.color = "var(--muted)";
+    toast.textContent = "Cette séance est déjà clôturée.";
+    return;
+  }
+  s.end = Date.now();
+  saveSessions(a);
+  const ent = allLogs.filter(l => l.date === s.date && l.day === s.day);
   toast.style.color = "var(--good)";
-  toast.textContent = `Séance clôturée — ${count} exercice(s) enregistré(s) aujourd'hui.`;
+  toast.textContent = `Séance clôturée — ${fmtDuration(s.end - s.start)} · ${new Set(ent.map(l => l.exo)).size} exercice(s) · ${fmtNum(ent.reduce((x, l) => x + entryVol(l), 0))} kg.`;
+  renderSessionBar();
   renderHistory();
+}
+
+// Liste des séances enrichies (durée, volume…) à partir des séries et des chronos.
+function sessionList() {
+  const sess = loadSessions();
+  const groups = {};
+  allLogs.forEach(l => { const k = l.date + '|' + l.day; (groups[k] = groups[k] || { date: l.date, day: l.day, entries: [] }).entries.push(l); });
+  const today = todayStr();
+  return Object.values(groups).map(g => {
+    const ts = g.entries.map(e => e.ts || 0).filter(Boolean);
+    const minTs = ts.length ? Math.min(...ts) : 0, maxTs = ts.length ? Math.max(...ts) : 0;
+    const rec = findSession(sess, g.date, g.day);
+    g.start = rec ? rec.start : minTs;
+    g.running = !!(rec && !rec.end && g.date === today);
+    const end = rec ? (rec.end || (g.date === today ? Date.now() : maxTs)) : maxTs;
+    g.durMs = Math.max(0, end - g.start);
+    g.vol = g.entries.reduce((x, l) => x + entryVol(l), 0);
+    g.sets = g.entries.reduce((x, l) => x + (l.sets || 1), 0);
+    g.reps = g.entries.reduce((x, l) => x + (l.sets || 1) * l.reps, 0);
+    return g;
+  }).sort((a, b) => b.start - a.start);
+}
+
+// ═══ ONGLET STATISTIQUES ═══
+const BODY_BASE = '#252f40';
+let musclesMode = 'semaine', musOffset = 0, musMetric = 'vol';
+
+// Zones du corps pour chaque groupe musculaire de l'appli.
+const MUSCLE_ZONES = {
+  "Pectoraux": ["pec"], "Épaules": ["delt"], "Trapèzes": ["trap"], "Dos": ["lats", "lowback"],
+  "Biceps": ["biceps"], "Triceps": ["triceps"], "Avant-bras": ["forearm"], "Abdos": ["abs"],
+  "Fessiers": ["glutes"], "Mollets": ["calf"], "Jambes": ["quads", "hams"]
+};
+
+function exoMuscleOf(name) {
+  const g = groupForMachine(name);
+  if (g) return g;
+  for (const d of Object.keys(PROGRAM)) {
+    const f = (PROGRAM[d] || []).find(e => e.name === name);
+    if (f && f.muscle) return f.muscle;
+  }
+  return 'Autre';
+}
+
+// « Jambes » : on distingue devant / derrière d'après le nom de l'exercice.
+function legZones(name) {
+  const n = normSearch(name);
+  if (/curl|ischio|roumain|good morning|souleve|hamstring/.test(n)) return { hams: 1 };
+  if (/extension|presse|squat|fente|hack|sissy|step|leg press|adduct|abduct|quadri/.test(n)) return { quads: 1 };
+  return { quads: 0.6, hams: 0.6 };
+}
+
+function zoneScores(entries) {
+  const z = {}, byMuscle = {};
+  entries.forEach(l => {
+    const sets = l.sets || 1, m = exoMuscleOf(l.exo);
+    byMuscle[m] = (byMuscle[m] || 0) + sets;
+    if (m === 'Jambes') {
+      const lz = legZones(l.exo);
+      Object.keys(lz).forEach(k => { z[k] = (z[k] || 0) + sets * lz[k]; });
+    } else if (MUSCLE_ZONES[m]) {
+      MUSCLE_ZONES[m].forEach(k => { z[k] = (z[k] || 0) + sets; });
+    }
+  });
+  const max = Math.max(0, ...Object.values(z));
+  const t = {};
+  Object.keys(z).forEach(k => { t[k] = max ? Math.max(0.28, z[k] / max) : 0; });
+  return { t, byMuscle };
+}
+
+// Dégradé aux couleurs de l'appli : cyan → violet → magenta.
+function focusColor(t) {
+  const st = [[77, 224, 232], [154, 107, 255], [212, 63, 214]];
+  const x = Math.min(1, Math.max(0, t)) * 2, i = Math.min(1, Math.floor(x)), f = x - i;
+  const c = st[i].map((v, k) => Math.round(v + (st[i + 1][k] - v) * f));
+  return `rgb(${c[0]},${c[1]},${c[2]})`;
+}
+
+let svgUid = 0;
+function bodySvg(t) {
+  const u = 'bd' + (++svgUid);
+  const pair = (zone, d) => {
+    const on = t[zone];
+    const attrs = on
+      ? `fill="${focusColor(t[zone])}" fill-opacity=".92" stroke="rgba(255,255,255,.6)" stroke-width=".8" filter="url(#${u}g)"`
+      : `fill="rgba(255,255,255,.045)" stroke="rgba(255,255,255,.12)" stroke-width=".8"`;
+    return `<g ${attrs}><g>${d}</g><g transform="scale(-1,1)">${d}</g></g>`;
+  };
+  const one = (zone, d) => {
+    const on = t[zone];
+    const attrs = on
+      ? `fill="${focusColor(t[zone])}" fill-opacity=".92" stroke="rgba(255,255,255,.6)" stroke-width=".8" filter="url(#${u}g)"`
+      : `fill="rgba(255,255,255,.045)" stroke="rgba(255,255,255,.12)" stroke-width=".8"`;
+    return `<g ${attrs}>${d}</g>`;
+  };
+  const ARM = 'M60 74 C74 76 84 90 83 108 C85 140 89 170 93 196 C95 212 99 226 97 238 C93 247 84 247 80 240 C78 222 74 200 70 180 C66 150 62 120 56 100 Z';
+  const LEG = 'M4 246 L47 246 C53 280 53 310 47 340 C45 360 45 385 47 410 C41 419 26 419 20 410 C20 385 18 360 14 340 C8 310 4 280 4 246 Z';
+  const sil = `<g fill="url(#${u}s)" stroke="rgba(77,224,232,.38)" stroke-width="1" stroke-linejoin="round">
+    <ellipse cx="0" cy="26" rx="17" ry="21"/><path d="M-9 44 L9 44 L11 62 L-11 62 Z"/>
+    <path d="M0 60 L22 62 C40 64 56 66 62 76 C60 100 52 150 40 190 C42 210 46 230 46 246 L-46 246 C-46 230 -42 210 -40 190 C-52 150 -60 100 -62 76 C-56 66 -40 64 -22 62 Z"/>
+    <path d="${ARM}"/><path d="${ARM}" transform="scale(-1,1)"/><path d="${LEG}"/><path d="${LEG}" transform="scale(-1,1)"/></g>`;
+  const DELT = '<path d="M58 76 C72 76 82 88 80 106 C70 106 62 100 56 90 Z"/>';
+  const ARMM = '<path d="M66 112 C76 110 82 124 82 142 C78 150 68 150 64 142 C62 130 62 120 66 112 Z"/>';
+  const FORE = '<path d="M70 168 C80 164 90 180 92 204 C90 218 82 222 78 214 C74 200 70 184 70 168 Z"/>';
+  const front = sil
+    + pair('pec', '<path d="M4 76 C24 70 44 74 56 86 C56 102 44 112 28 112 C14 112 6 104 4 94 Z"/>')
+    + pair('delt', DELT) + pair('biceps', ARMM) + pair('forearm', FORE)
+    + pair('abs', '<rect x="3" y="116" width="16" height="19" rx="6"/><rect x="3" y="139" width="16" height="19" rx="6"/><rect x="4" y="162" width="14" height="19" rx="6"/>')
+    + pair('quads', '<path d="M8 252 C26 250 42 254 48 262 C52 290 50 314 44 336 C32 340 18 334 12 322 C6 300 6 276 8 252 Z"/>')
+    + pair('calf', '<path d="M28 352 C36 350 44 356 44 372 C44 388 40 398 36 402 C28 396 24 380 24 366 Z"/>');
+  const back = sil
+    + pair('trap', '<path d="M0 62 L22 64 C34 66 46 72 56 80 C44 90 30 100 16 112 C8 118 4 124 0 128 Z"/>')
+    + pair('delt', DELT)
+    + pair('lats', '<path d="M8 134 C24 120 44 108 56 102 C58 130 50 160 38 178 C24 178 12 170 8 156 Z"/>')
+    + one('lowback', '<rect x="-16" y="180" width="32" height="24" rx="10"/>')
+    + pair('triceps', ARMM) + pair('forearm', FORE)
+    + pair('glutes', '<path d="M4 208 C20 202 42 206 46 224 C46 242 30 252 12 250 C6 244 4 226 4 208 Z"/>')
+    + pair('hams', '<path d="M8 262 C26 258 42 262 48 270 C50 296 48 318 42 336 C30 340 18 334 12 322 C6 300 6 280 8 262 Z"/>')
+    + pair('calf', '<path d="M26 350 C38 346 48 356 48 374 C46 392 40 402 34 404 C26 396 22 376 24 360 Z"/>');
+  return `<svg viewBox="0 0 440 446" role="img" aria-label="Carte des muscles travaillés">
+    <defs><linearGradient id="${u}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c2942"/><stop offset="1" stop-color="#0b111c"/></linearGradient>
+    <filter id="${u}g" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+    <g transform="translate(110 4)">${front}</g><g transform="translate(330 4)">${back}</g>
+    <text x="110" y="440" text-anchor="middle" font-size="10" letter-spacing="3" fill="#6f8096">FACE</text>
+    <text x="330" y="440" text-anchor="middle" font-size="10" letter-spacing="3" fill="#6f8096">DOS</text></svg>`;
+}
+
+function fmtDuration(ms) {
+  const mins = Math.round(ms / 60000);
+  if (mins < 1) return ms > 0 ? '< 1 min' : '—';
+  const h = Math.floor(mins / 60), mm = mins % 60;
+  return h ? `${h} h ${String(mm).padStart(2, '0')}` : `${mm} min`;
+}
+function fmtNum(n) { return Math.round(n).toLocaleString('fr-FR').replace(/ /g, ' '); }
+function fmtKg(n) { return (Math.round(n * 10) / 10).toString().replace('.', ','); }
+function entryVol(l) { return (l.sets || 1) * l.reps * l.poids; }
+function volByMuscle(entries) {
+  const o = {};
+  entries.forEach(l => { const m = exoMuscleOf(l.exo); o[m] = (o[m] || 0) + entryVol(l); });
+  return o;
+}
+function deltaHtml(cur, prev) {
+  if (!prev) return '';
+  const p = (cur - prev) / prev * 100, up = p >= 0;
+  return `<div><span class="st-delta ${up ? 'up' : 'down'}">${up ? '▲' : '▼'} ${Math.abs(Math.round(p))} % vs période précédente</span></div>`;
+}
+
+// Progression par exercice, calculée sur tout l'historique.
+function exoProgress() {
+  const by = {};
+  allLogs.forEach(l => { (by[l.exo] = by[l.exo] || []).push(l); });
+  const out = [];
+  Object.keys(by).forEach(exo => {
+    const sess = {};
+    by[exo].forEach(l => {
+      const s = sess[l.date] = sess[l.date] || { ts: 0, max: 0, reps: 0 };
+      s.ts = Math.max(s.ts, l.ts || 0);
+      if (l.poids > s.max || (l.poids === s.max && l.reps > s.reps)) { s.max = l.poids; s.reps = l.reps; }
+    });
+    const list = Object.values(sess).sort((a, b) => a.ts - b.ts);
+    if (list.length < 2) return;
+    const first = list[0].max, last = list[list.length - 1].max;
+    const bestBefore = Math.max(...list.slice(0, -3).map(x => x.max), 0);
+    const stagne = list.length >= 4 && list.slice(-3).every(x => x.max <= bestBefore);
+    out.push({ exo, n: list.length, first, last, diff: last - first, pct: first ? (last - first) / first * 100 : 0, stagne });
+  });
+  return out;
+}
+
+// ----- périodes : jour / semaine / mois -----
+function periodStart(d, mode) {
+  const x = new Date(d);
+  if (mode === 'jour') return new Date(x.getFullYear(), x.getMonth(), x.getDate());
+  if (mode === 'semaine') return new Date(x.getFullYear(), x.getMonth(), x.getDate() - (x.getDay() + 6) % 7);
+  return new Date(x.getFullYear(), x.getMonth(), 1);
+}
+function shiftPeriod(d, mode, n) {
+  if (mode === 'jour') return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+  if (mode === 'semaine') return new Date(d.getFullYear(), d.getMonth(), d.getDate() + 7 * n);
+  return new Date(d.getFullYear(), d.getMonth() + n, 1);
+}
+function periodCount(mode) { return mode === 'jour' ? 14 : 12; }
+function periodData(sessions, from, to) {
+  const ss = sessions.filter(x => x.start >= from.getTime() && x.start < to.getTime());
+  return {
+    ss, entries: ss.flatMap(x => x.entries),
+    vol: ss.reduce((a, x) => a + x.vol, 0), dur: ss.reduce((a, x) => a + x.durMs, 0),
+    sets: ss.reduce((a, x) => a + x.sets, 0), reps: ss.reduce((a, x) => a + x.reps, 0)
+  };
+}
+function periodLabel(from, mode, off) {
+  const f = (d, o) => d.toLocaleDateString('fr-FR', o);
+  if (mode === 'jour') return [off === 0 ? "Aujourd'hui" : off === -1 ? 'Hier' : f(from, { weekday: 'long' }), f(from, { day: 'numeric', month: 'long', year: 'numeric' })];
+  if (mode === 'semaine') {
+    const end = shiftPeriod(from, 'jour', 6);
+    return [off === 0 ? 'Cette semaine' : off === -1 ? 'Semaine dernière' : 'Semaine du ' + from.getDate(), f(from, { day: 'numeric', month: 'short' }) + ' – ' + f(end, { day: 'numeric', month: 'short', year: 'numeric' })];
+  }
+  return [off === 0 ? 'Ce mois-ci' : f(from, { month: 'long' }), f(from, { month: 'long', year: 'numeric' })];
+}
+function metricOf(pd) { return musMetric === 'vol' ? pd.vol : musMetric === 'dur' ? pd.dur : pd.sets; }
+function metricFmt(v) {
+  if (musMetric === 'vol') return v >= 1000 ? (v / 1000).toFixed(1).replace('.', ',') + ' t' : Math.round(v) + ' kg';
+  if (musMetric === 'dur') return v >= 60000 ? fmtDuration(v) : '0';
+  return String(Math.round(v));
+}
+
+// Courbe façon Strava : aire dégradée + points cliquables.
+function trendChartHtml(vals, labels, selIdx) {
+  const W = 340, H = 168, pl = 12, pr = 52, pt = 16, pb = 26, n = vals.length;
+  const max = Math.max(...vals, 1) * 1.12;
+  const X = i => pl + i * (W - pl - pr) / (n - 1), Y = v => pt + (H - pt - pb) * (1 - v / max);
+  const line = vals.map((v, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)} ${Y(v).toFixed(1)}`).join(' ');
+  const area = `${line} L${X(n - 1).toFixed(1)} ${H - pb} L${X(0).toFixed(1)} ${H - pb} Z`;
+  const grid = [0, .5, 1].map(f => { const v = max / 1.12 * f, y = Y(v); return `<line x1="${pl}" x2="${W - pr + 6}" y1="${y}" y2="${y}" stroke="rgba(255,255,255,.07)"/><text x="${W - pr + 10}" y="${y + 3.5}" font-size="10" fill="#6f8096">${metricFmt(v)}</text>`; }).join('');
+  const every = n > 12 ? 2 : 3;
+  const xl = labels.map((l, i) => (i % every === (n - 1) % every) ? `<text x="${X(i)}" y="${H - 8}" text-anchor="middle" font-size="10" fill="#6f8096">${l}</text>` : '').join('');
+  const dots = vals.map((v, i) => i === selIdx
+    ? `<circle cx="${X(i)}" cy="${Y(v)}" r="9" fill="rgba(212,63,214,.25)"/><circle cx="${X(i)}" cy="${Y(v)}" r="5.2" fill="#d43fd6" stroke="#fff" stroke-width="1.5"/>`
+    : `<circle cx="${X(i)}" cy="${Y(v)}" r="3.2" fill="#0f1621" stroke="#4de0e8" stroke-width="1.6"/>`).join('');
+  const hits = vals.map((v, i) => `<rect x="${X(i) - (W - pl - pr) / (n - 1) / 2}" y="0" width="${(W - pl - pr) / (n - 1)}" height="${H}" fill="transparent" data-idx="${i}" style="cursor:pointer"/>`).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Évolution">
+    <defs><linearGradient id="trA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4de0e8" stop-opacity=".38"/><stop offset="1" stop-color="#d43fd6" stop-opacity="0"/></linearGradient>
+    <filter id="trG"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+    ${grid}<path d="${area}" fill="url(#trA)"/><path d="${line}" fill="none" stroke="#4de0e8" stroke-width="2.2" stroke-linejoin="round" filter="url(#trG)"/>
+    ${dots}${xl}${hits}</svg>`;
+}
+
+function statsDashboard() {
+  const mode = musclesMode, N = periodCount(mode);
+  const sessions = sessionList();
+  const cur = periodStart(new Date(), mode);
+  const starts = Array.from({ length: N }, (_, i) => shiftPeriod(cur, mode, i - (N - 1)));
+  const data = starts.map(d => periodData(sessions, d, shiftPeriod(d, mode, 1)));
+  const selIdx = N - 1 + musOffset;
+  const pd = data[selIdx], prev = selIdx > 0 ? data[selIdx - 1] : periodData(sessions, shiftPeriod(starts[0], mode, -1), starts[0]);
+  const [title, range] = periodLabel(starts[selIdx], mode, musOffset);
+  const labels = starts.map(d => mode === 'jour' ? String(d.getDate()) : mode === 'semaine' ? d.getDate() + '/' + (d.getMonth() + 1) : d.toLocaleDateString('fr-FR', { month: 'short' }).replace('.', ''));
+  const metrics = [['vol', 'Poids total'], ['dur', 'Temps'], ['sets', 'Séries']];
+
+  let html = `<div class="st-nav"><button data-nav="-1" ${selIdx === 0 ? 'disabled' : ''} aria-label="Période précédente">‹</button>
+      <div class="st-nav-title">${esc(title.charAt(0).toUpperCase() + title.slice(1))}<span>${esc(range)}</span></div>
+      <button data-nav="1" ${musOffset === 0 ? 'disabled' : ''} aria-label="Période suivante">›</button></div>
+    <div class="st-metrics">${metrics.map(([k, l]) => `<button data-metric="${k}" class="${musMetric === k ? 'active' : ''}">${l}</button>`).join('')}</div>
+    <div class="st-card st-chart">${trendChartHtml(data.map(metricOf), labels, selIdx)}</div>`;
+
+  if (!pd.ss.length) return html + '<div class="mus-empty">Aucune séance sur cette période.</div>';
+
+  const entries = pd.entries;
+  const prIds = computePRIds();
+  const prCount = entries.filter(l => prIds.has(l.id)).length;
+  const running = pd.ss.some(x => x.running);
+  const { t } = zoneScores(entries);
+  const vm = volByMuscle(entries);
+  const keys = Object.keys(vm).filter(k => vm[k] > 0 && k !== 'Autre').sort((a, b) => vm[b] - vm[a]);
+  const totalVm = keys.reduce((a, k) => a + vm[k], 0) || 1, topV = vm[keys[0]] || 1;
+  const bars = keys.map(k => `<div class="st-row"><span>${esc(k)}</span><div class="st-track"><div class="st-fill" style="width:${Math.max(3, vm[k] / topV * 100).toFixed(0)}%;background:${MUSCLE_COLORS[k] || 'var(--accent)'}"></div></div><span class="st-val">${fmtNum(vm[k])} kg · ${Math.round(vm[k] / totalVm * 100)} %</span></div>`).join('');
+  const nb = pd.ss.length;
+
+  const prog = exoProgress();
+  const ups = prog.filter(p => p.diff > 0).sort((a, b) => b.pct - a.pct).slice(0, 5);
+  const flats = prog.filter(p => p.stagne).slice(0, 4);
+  const upHtml = ups.length ? ups.map(p => `<div class="st-impr"><span class="nm">${esc(p.exo)}<span class="sub">${fmtKg(p.first)} → ${fmtKg(p.last)} kg · ${p.n} séances</span></span><span class="tag up">+${fmtKg(p.diff)} kg (+${Math.round(p.pct)} %)</span></div>`).join('') : '<div class="st-hint">Pas encore assez de séances sur un même exercice pour mesurer une progression.</div>';
+  const flatHtml = flats.map(p => `<div class="st-impr"><span class="nm">${esc(p.exo)}<span class="sub">Bloqué à ${fmtKg(p.last)} kg depuis 3 séances : essaie +2,5 kg ou une rep de plus</span></span><span class="tag flat">stagne</span></div>`).join('');
+
+  return html + `<div class="st-kpis">
+      <div class="st-kpi big"><div class="n">${fmtNum(pd.vol)} kg</div><div class="l">Poids total soulevé</div>${deltaHtml(pd.vol, prev.vol)}</div>
+      <div class="st-kpi"><div class="n">${pd.dur >= 60000 ? fmtDuration(pd.dur) : '—'}</div><div class="l">temps d'entraînement${running ? ' (en cours)' : ''}</div>${deltaHtml(pd.dur, prev.dur)}</div>
+      <div class="st-kpi"><div class="n">${nb}</div><div class="l">séance${nb > 1 ? 's' : ''}</div>${deltaHtml(nb, prev.ss.length)}</div>
+      <div class="st-kpi"><div class="n">${fmtNum(pd.sets)}</div><div class="l">séries</div></div>
+      <div class="st-kpi"><div class="n">${fmtNum(pd.reps)}</div><div class="l">répétitions · ${prCount} record${prCount > 1 ? 's' : ''}</div></div>
+    </div>
+    <div class="st-sec">Zones travaillées</div>
+    <div class="mus-card"><div class="mus-map">${bodySvg(t)}</div><div class="mus-legend"><i></i>Focus</div></div>
+    <div class="st-card">${bars}<div class="st-hint">Poids total soulevé (séries × reps × kg) par muscle.</div></div>
+    <div class="st-sec">Améliorations</div>
+    <div class="st-card">${upHtml}<div class="st-hint">Charge maximale de la 1ʳᵉ séance comparée à la dernière, par exercice (tout l'historique).</div></div>
+    ${flatHtml ? `<div class="st-sec">À relancer</div><div class="st-card">${flatHtml}</div>` : ''}`;
+}
+
+function muscleCard(g) {
+  const { t, byMuscle } = zoneScores(g.entries);
+  const chips = Object.keys(byMuscle).filter(k => byMuscle[k]).sort((a, b) => byMuscle[b] - byMuscle[a])
+    .map(k => `<span class="mus-chip">${esc(k)} · ${byMuscle[k]} série${byMuscle[k] > 1 ? 's' : ''}</span>`).join('');
+  const dur = g.durMs >= 60000 ? fmtDuration(g.durMs) : '—';
+  return `<div class="mus-card">
+    <div class="mus-map">${bodySvg(t)}</div>
+    <div class="mus-legend"><i></i>Focus</div>
+    <div class="mus-body">
+      <div class="mus-title">${esc(g.day)}${g.running ? ' · en cours' : ''}</div>
+      <div class="mus-date">${esc(g.date)}</div>
+      <div class="mus-stats">
+        <div><div class="l">Temps écoulé</div><div class="n">${dur}</div></div>
+        <div><div class="l">Volume</div><div class="n">${fmtNum(g.vol)} kg</div></div>
+        <div><div class="l">Nombre total de séries</div><div class="n">${fmtNum(g.sets)}</div></div>
+        <div><div class="l">Nombre total de répétitions</div><div class="n">${fmtNum(g.reps)}</div></div>
+      </div>
+      <div class="mus-chips">${chips}</div>
+    </div></div>`;
+}
+
+function renderMuscles() {
+  const box = document.getElementById('musContent');
+  document.querySelectorAll('#musModes button').forEach(b => b.classList.toggle('active', b.dataset.mode === musclesMode));
+  if (!allLogs.length) {
+    box.innerHTML = '<div class="mus-empty">Aucune séance enregistrée pour l\'instant.<br>Valide des séries dans « Séance du jour » : tes statistiques apparaîtront ici.</div>';
+    return;
+  }
+  if (musclesMode === 'seances') { box.innerHTML = sessionList().slice(0, 20).map(muscleCard).join(''); return; }
+  box.innerHTML = statsDashboard();
+}
+
+function setupStatsUi() {
+  document.querySelectorAll('#musModes button').forEach(b => {
+    b.addEventListener('click', () => { musclesMode = b.dataset.mode; musOffset = 0; renderMuscles(); });
+  });
+  document.getElementById('musContent').addEventListener('click', e => {
+    const N = periodCount(musclesMode);
+    const nav = e.target.closest('[data-nav]');
+    if (nav) { musOffset = Math.min(0, Math.max(-(N - 1), musOffset + parseInt(nav.dataset.nav, 10))); renderMuscles(); return; }
+    const m = e.target.closest('[data-metric]');
+    if (m) { musMetric = m.dataset.metric; renderMuscles(); return; }
+    const pt = e.target.closest('[data-idx]');
+    if (pt) { musOffset = parseInt(pt.dataset.idx, 10) - (N - 1); renderMuscles(); }
+  });
 }
 
 function switchTab(tab) {
   document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   document.getElementById('tab-seance').style.display = tab === 'seance' ? 'block' : 'none';
   document.getElementById('tab-historique').style.display = tab === 'historique' ? 'block' : 'none';
+  document.getElementById('tab-muscles').style.display = tab === 'muscles' ? 'block' : 'none';
   document.getElementById('tab-poids').style.display = tab === 'poids' ? 'block' : 'none';
   if (tab === 'historique') renderHistory();
+  if (tab === 'muscles') renderMuscles();
   if (tab === 'poids') renderPoids();
 }
 
@@ -1906,7 +2361,8 @@ function exportData() {
     objectif: getObjectif(),
     program: PROGRAM,
     customCatalog: customCatalog,
-    restDefault: restDefault
+    restDefault: restDefault,
+    sessions: loadSessions()
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -1953,6 +2409,7 @@ function importData(file) {
       allLogs = data.logs;
       saveLogsToStorage();
     }
+    if (Array.isArray(data.sessions)) saveSessions(data.sessions);
     if (Array.isArray(data.poids)) {
       poidsLogs = data.poids;
       savePoidsToStorage();
@@ -2093,7 +2550,7 @@ function adjustRest(delta) {
 const KEY_TUTO_OFF = NS + "forge_tuto_off";
 const TUTO_STEPS = [
   {
-    visual: '<span class="tv-big">FORGE</span><span class="version-badge" style="animation:none;top:0">V3</span>',
+    visual: '<span class="tv-big">FORGE</span><span class="version-badge" style="animation:none;top:0">V4</span>',
     title: "Bienvenue",
     text: "<p>Forge est ton carnet de musculation : tu notes tes séries sur la machine, et il te montre ta progression.</p><ul><li>Tes données restent <b>sur ton téléphone</b> (pas de compte, pas de serveur).</li><li>Pas de code à taper : l'appli s'ouvre directement.</li><li>Ce tutoriel dure 30 secondes.</li></ul>"
   },
@@ -2115,7 +2572,7 @@ const TUTO_STEPS = [
   {
     visual: '<span class="tv-field" style="width:auto;padding:0 12px;font-style:normal">Historique</span><span class="tv-field" style="width:auto;padding:0 12px;font-style:normal">Poids</span>',
     title: "Suivre sa progression",
-    text: "<ul><li><b>Historique</b> : toutes tes lignes. Choisis un exercice dans le filtre pour voir sa <b>courbe de progression</b>.</li><li><b>Poids</b> : ajoute tes pesées, avec courbe et objectif.</li></ul>"
+    text: "<ul><li><b>Historique</b> : toutes tes lignes. Choisis un exercice dans le filtre pour voir sa <b>courbe de progression</b>.</li><li><b>Statistiques</b> : poids total soulevé par jour, semaine ou mois, carte des muscles travaillés, progression et exercices à relancer.</li><li>Le <b>chrono de séance</b> démarre à ta première série validée et s'arrête quand tu touches <b>Terminer la séance</b>.</li></ul>"
   },
   {
     visual: '<span class="tv-field" style="width:auto;padding:0 12px;font-style:normal">⬇ Exporter</span><span class="tv-field" style="width:auto;padding:0 12px;font-style:normal">Installer</span>',
@@ -2244,6 +2701,7 @@ function initApp() {
   document.querySelectorAll('nav.tabs button').forEach(b => {
     b.addEventListener('click', () => switchTab(b.dataset.tab));
   });
+  setupStatsUi();
   document.getElementById('saveBtn').addEventListener('click', finishSession);
   document.getElementById('filterDay').addEventListener('change', renderHistory);
   document.getElementById('filterExo').addEventListener('change', renderHistory);

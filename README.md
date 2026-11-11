@@ -7,7 +7,7 @@ Adresse : `https://thomaslecussan-bit.github.io/Musculation/Khilliann.html`
 
 - **Recherche d'exercice** : en mode Modifier, touche le nom de l'exercice → fenêtre avec barre de recherche en haut (accents ignorés, filtre aussi par muscle ou matériel).
 
-## Fonctionnalités (V3)
+## Fonctionnalités (V4)
 
 - Pas de code : l'appli s'ouvre directement
 - **8 séances** (chiffres néon 1 à 8 : Haut A, Bas A, Haut B, Bas B, Haut C, Bas C, Haut D, Bas D)
@@ -16,7 +16,9 @@ Adresse : `https://thomaslecussan-bit.github.io/Musculation/Khilliann.html`
 - **Notes** sur chaque exercice (bulle), visibles dans l'historique
 - **Records (PR)** : puce dorée quand on bat son meilleur poids
 - Historique filtrable + **courbe de progression** par exercice
-- Suivi du **poids de corps** (courbe, moyenne mobile, objectif)
+- **Chrono de séance** : démarre à la 1re série validée, s'arrête au bouton « Terminer la séance »
+- Onglet **Statistiques** (à la place de Poids) : poids total soulevé par jour / semaine / mois, courbe façon Strava, carte des muscles travaillés (face / dos), poids par muscle, améliorations et exercices à relancer
+- (Les anciennes pesées restent dans les données et dans l'export.)
 - Chrono de repos (réglable), alerte sonore et vibration
 - **Export / import** de sauvegarde (JSON)
 - **Tutoriel** à la première ouverture (désactivable, relançable depuis le bas de page)

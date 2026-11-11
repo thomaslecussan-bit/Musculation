@@ -1,6 +1,6 @@
 // Forge — service worker : permet l'installation et le fonctionnement hors ligne.
 // Pour forcer une mise à jour du cache, change simplement le numéro de version ci-dessous.
-const VERSION = 'forge-v3-4';
+const VERSION = 'forge-v4-1';
 const SHELL = ['./', './Khilliann.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './arcane-duo.jpg.png'];
 
 self.addEventListener('install', (event) => {
